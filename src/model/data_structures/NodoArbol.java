@@ -7,8 +7,8 @@ public class NodoArbol <Key extends Comparable<Key>, Value>
 		Value val; // associated data
 		NodoArbol left, right; // subtrees
 		int size; // # nodes in this subtree
-		boolean color; // color of link from
-		// parent to this node
+		boolean color; // color of parent link 
+		
 		NodoArbol (Key key, Value val, int N, boolean color)
 		{
 			this.key = key;

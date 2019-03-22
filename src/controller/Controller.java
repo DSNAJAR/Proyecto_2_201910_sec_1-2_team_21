@@ -262,6 +262,7 @@ public class Controller {
 				String[] values = data.split(",");
 				movingViolationsList.agregar(new VOMovingViolations(Integer.parseInt(values[0]), values[1], values[2], Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]), Integer.parseInt(values[6]), values[7], Integer.parseInt(values[8]), Integer.parseInt(values[9]), Integer.parseInt(values[10]), Integer.parseInt(values[11]), values[12], Integer.parseInt(values[13]), values[14], values[15], values[16], Integer.parseInt(values[17])));
 			}
+			inputStream.close();
 		}
 		catch(Exception e) {
 			e.printStackTrace();

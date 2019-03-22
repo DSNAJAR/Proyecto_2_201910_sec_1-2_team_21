@@ -14,12 +14,6 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
         for (int i = 0; i < m; i++)
             st[i] = new SequentialSearchST<Key, Value>();
     } 
-	
-	@Override
-	public Iterator<K> iterator() {
-		// TODO Auto-generated method stub
-	}
-
 	@Override
 	public void put(Comparable key, Object value) {
 		// TODO Auto-generated method stub
@@ -75,4 +69,9 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
         this.n  = temp.n;
         this.st = temp.st;
     }
+	@Override
+	public Iterator iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -50,7 +50,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	    *  Node helper methods.
 	    ***************************************************************************/
 	    // is node x red; false if x is null ?
-	    private boolean isRed(NodoArbol x) {
+	    private boolean 	(NodoArbol x) {
 	        if (x == null) return false;
 	        return x.color == RED;
 	    }
