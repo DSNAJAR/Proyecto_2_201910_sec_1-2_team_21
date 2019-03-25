@@ -101,7 +101,7 @@ public class Controller {
 	/**
 	 * Es el formato que se usara para las fechas
 	 */
-	//private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	/**
 	 * Es la referencia al view
@@ -114,24 +114,22 @@ public class Controller {
 	private DoubleLinkedList<VOMovingViolations> movingViolationsList;
 	
 	/**
-	 * Cautrimestre del cual se subiran los datos - 1(Enero - Abril), 2(Mayo - Agosto) o 3(Septiembre - Diciembre)
+	 * Semestre del cual se subiran los datos - 1(Enero - Junio) o 2(Julio - Diciembtre) 
 	 */
-	public int cuatrimestre;
+	public int semestre;
 	
 	//-----------------------------------------------------------------------------------------------
 	// Constructores
 	// ----------------------------------------------------------------------------------------------
 	
 	/**
-	 * Construye un nuevo controlador con una pila y una cola.
-	 * <b>post:</b> se construyo  un nuevo controlador con una cola y una pila
-	 * La pila esta vacía <br>
-	 * La cola esta vacía <br> 
+	 * Construye un nuevo controlador con una lista doblemente encadenada.
+	 * <b>post:</b> se construyo  un nuevo controlador con una lista doblemente encadenada
+	 * La lista doblemente encadenada esta vacía <br>
 	 */
 	public Controller() {
 		view = new MovingViolationsManagerView();
 		
-		//TODO, inicializar la pila y la cola
 		movingViolationsList = new DoubleLinkedList<VOMovingViolations>();
 	}
 	
@@ -153,8 +151,8 @@ public class Controller {
 			switch(option)
 			{
 				case 0:
-					view.printMessage("Ingrese el cuatrimestre (1, 2 o 3)");
-					int numeroCuatrimestre = sc.nextInt();
+					view.printMessage("Ingrese el Semestre (1 o 2)");
+					int numeroSemestre = sc.nextInt();
 					if(movingViolationsList.estaVacia()){
 						controller.loadMovingViolations(1);
 					}
@@ -208,10 +206,10 @@ public class Controller {
 	
 	/**
 	 * Carga los datos segun el cuatrimestre escogido por el usuario
-	 * @param pCuatrimestre Numero de cuatrimestre escogido por el usuario. pCuatrimestre = 1 | pCuatrimestre = 2 | pCuatrimestre = 3
+	 * @param pSemestre Numero de semestre escogido por el usuario. pSemestre = 1 | pSemestre = 2
 	 * @throws Exception si no pudo cargar los datos.
 	 */
-	public void loadMovingViolations(int pCuatrimestre) throws Exception{
+	public void loadMovingViolations(int pSemestre) throws Exception{
 		// TODO
 		String[] archivos = new String[12];
 		for(int i = 0; i < 12; i++){
@@ -231,20 +229,14 @@ public class Controller {
 		
 		String fileName = null;
 		
-		if(pCuatrimestre == 1) {
-			for(int i = 0; i < 4; i++) {
+		if(pSemestre == 1) {
+			for(int i = 0; i < 6; i++) {
 				fileName = archivos[i];
 				loadArchivo(fileName);
 			}
 		}
-		if(pCuatrimestre == 2) {
-			for(int i = 4; i < 8; i++) {
-				fileName = archivos[i];
-				loadArchivo(fileName);
-			}
-		}
-		if(pCuatrimestre == 3) {
-			for(int i = 8; i < 11; i++) {
+		if(pSemestre == 2) {
+			for(int i = 6; i < 12; i++) {
 				fileName = archivos[i];
 				loadArchivo(fileName);
 			}
@@ -273,7 +265,8 @@ public class Controller {
 	// Métodos
 	//------------------------------------------------------------------------------------------
 	
-	//Parte A 
+	//Parte A
+	
 	
 	
 	/**

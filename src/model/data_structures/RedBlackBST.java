@@ -50,7 +50,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	    *  Node helper methods.
 	    ***************************************************************************/
 	    // is node x red; false if x is null ?
-	    private boolean 	(NodoArbol x) {
+	    private boolean esRojo (NodoArbol x) {
 	        if (x == null) return false;
 	        return x.color == RED;
 	    }
@@ -171,9 +171,9 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        else              h.val   = val;
 
 	        // fix-up any right-leaning links
-	        if (isRed(h.right) && !isRed(h.left))      h = rotateLeft(h);
-	        if (isRed(h.left)  &&  isRed(h.left.left)) h = rotateRight(h);
-	        if (isRed(h.left)  &&  isRed(h.right))     flipColors(h);
+	        if (esRojo(h.right) && !esRojo(h.left))      h = rotateLeft(h);
+	        if (esRojo(h.left)  &&  esRojo(h.left.left)) h = rotateRight(h);
+	        if (esRojo(h.left)  &&  esRojo(h.right))     flipColors(h);
 	        h.size = size(h.left) + size(h.right) + 1;
 
 	        return h;
@@ -191,7 +191,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        if (isEmpty()) throw new NoSuchElementException("BST underflow");
 
 	        // if both children of root are black, set root to red
-	        if (!isRed(root.left) && !isRed(root.right))
+	        if (!esRojo(root.left) && !esRojo(root.right))
 	            root.color = RED;
 
 	        root = deleteMin(root);
@@ -204,7 +204,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        if (h.left == null)
 	            return null;
 
-	        if (!isRed(h.left) && !isRed(h.left.left))
+	        if (!esRojo(h.left) && !esRojo(h.left.left))
 	            h = moveRedLeft(h);
 
 	        h.left = deleteMin(h.left);
@@ -220,7 +220,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        if (isEmpty()) throw new NoSuchElementException("BST underflow");
 
 	        // if both children of root are black, set root to red
-	        if (!isRed(root.left) && !isRed(root.right))
+	        if (!esRojo(root.left) && !esRojo(root.right))
 	            root.color = RED;
 
 	        root = deleteMax(root);
@@ -230,13 +230,13 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 
 	    // delete the key-value pair with the maximum key rooted at h
 	    private NodoArbol deleteMax(NodoArbol h) { 
-	        if (isRed(h.left))
+	        if (esRojo(h.left))
 	            h = rotateRight(h);
 
 	        if (h.right == null)
 	            return null;
 
-	        if (!isRed(h.right) && !isRed(h.right.left))
+	        if (!esRojo(h.right) && !esRojo(h.right.left))
 	            h = moveRedRight(h);
 
 	        h.right = deleteMax(h.right);
@@ -256,7 +256,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        if (!contains(key)) return;
 
 	        // if both children of root are black, set root to red
-	        if (!isRed(root.left) && !isRed(root.right))
+	        if (!esRojo(root.left) && !esRojo(root.right))
 	            root.color = RED;
 
 	        root = delete(root, key);
@@ -269,16 +269,16 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        // assert get(h, key) != null;
 
 	        if (key.compareTo((Key) h.key) < 0)  {
-	            if (!isRed(h.left) && !isRed(h.left.left))
+	            if (!esRojo(h.left) && !esRojo(h.left.left))
 	                h = moveRedLeft(h);
 	            h.left = delete(h.left, key);
 	        }
 	        else {
-	            if (isRed(h.left))
+	            if (esRojo(h.left))
 	                h = rotateRight(h);
 	            if (key.compareTo((Key) h.key) == 0 && (h.right == null))
 	                return null;
-	            if (!isRed(h.right) && !isRed(h.right.left))
+	            if (!esRojo(h.right) && !esRojo(h.right.left))
 	                h = moveRedRight(h);
 	            if (key.compareTo((Key) h.key) == 0) {
 	            	NodoArbol x = min(h.right);
@@ -298,7 +298,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        // assert isRed(h) && !isRed(h.left) && !isRed(h.left.left);
 
 	        flipColors(h);
-	        if (isRed(h.right.left)) { 
+	        if (esRojo(h.right.left)) { 
 	            h.right = rotateRight(h.right);
 	            h = rotateLeft(h);
 	            flipColors(h);
@@ -312,7 +312,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	        // assert (h != null);
 	        // assert isRed(h) && !isRed(h.right) && !isRed(h.right.left);
 	        flipColors(h);
-	        if (isRed(h.left.left)) { 
+	        if (esRojo(h.left.left)) { 
 	            h = rotateRight(h);
 	            flipColors(h);
 	        }
@@ -323,9 +323,9 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	    private NodoArbol balance(NodoArbol h) {
 	        // assert (h != null);
 
-	        if (isRed(h.right))                      h = rotateLeft(h);
-	        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
-	        if (isRed(h.left) && isRed(h.right))     flipColors(h);
+	        if (esRojo(h.right))                      h = rotateLeft(h);
+	        if (esRojo(h.left) && esRojo(h.left.left)) h = rotateRight(h);
+	        if (esRojo(h.left) && esRojo(h.right))     flipColors(h);
 
 	        h.size = size(h.left) + size(h.right) + 1;
 	        return h;
