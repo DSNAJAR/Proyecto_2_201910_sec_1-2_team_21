@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Iterator;
@@ -20,8 +21,10 @@ import com.sun.xml.internal.ws.util.StringUtils;
 import jdk.nashorn.internal.runtime.arrays.IteratorAction;
 import model.data_structures.DoubleLinkedList;
 import model.data_structures.Nodo;
+import model.logic.ManejoFechaHora;
+import model.logic.MovingViolationsManager;
+import model.vo.EstadisticasCargaInfracciones;
 import model.vo.VOMovingViolations;
-import model.vo.VOViolationCode;
 import sun.reflect.generics.tree.VoidDescriptor;
 import view.MovingViolationsManagerView;
 
@@ -29,89 +32,16 @@ import view.MovingViolationsManagerView;
  * Esta clase representa el controlador de los datos
  */
 public class Controller {
-	
-	//---------------------------------------------------------------------------------------------------
-	// Constantes
-	// --------------------------------------------------------------------------------------------------
-
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Enero
-	 */
-	public static final String DATOS_MES_1 = "./data/Moving_Violations_Issued_in_January_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Febrero
-	 */
-	public static final String DATOS_MES_2 = "./data/Moving_Violations_Issued_in_February_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Marzo
-	 */
-	public static final String DATOS_MES_3 = "./data/Moving_Violations_Issued_in_March_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Abril
-	 */
-	public static final String DATOS_MES_4 = "./data/Moving_Violations_Issued_in_April_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Mayo
-	 */
-	public static final String DATOS_MES_5 = "./data/Moving_Violations_Issued_in_May_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Junio
-	 */
-	public static final String DATOS_MES_6= "./data/Moving_Violations_Issued_in_June_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Julio
-	 */
-	public static final String DATOS_MES_7 = "./data/Moving_Violations_Issued_in_July_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Agosto
-	 */
-	public static final String DATOS_MES_8 = "./data/Moving_Violations_Issued_in_August_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Septiembre
-	 */
-	public static final String DATOS_MES_9 = "./data/Moving_Violations_Issued_in_September_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Octubre
-	 */
-	public static final String DATOS_MES_10 = "./data/Moving_Violations_Issued_in_Octomber_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Noviembre
-	 */
-	public static final String DATOS_MES_11 = "./data/Moving_Violations_Issued_in_November_2018.csv";
-	
-	/**
-	 * Constante que representa los datos de las infracciones realizadas en Diciembre
-	 */
-	public static final String DATOS_MES_12 = "./data/Moving_Violations_Issued_in_December_2018.csv";
-	
 	//--------------------------------------------------------------------------------------------------
 	// Atributos
 	//--------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Es el formato que se usara para las fechas
-	 */
-	private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	
 	/**
 	 * Es la referencia al view
 	 */
 	private MovingViolationsManagerView view;
-	
-	/**
-	 * Lista doble donde se van a cargar los datos de los archivos
-	 */
-	private DoubleLinkedList<VOMovingViolations> movingViolationsList;
+		
+	// Componente modelo (logica de la aplicacion)
+	private MovingViolationsManager model;
 	
 	/**
 	 * Semestre del cual se subiran los datos - 1(Enero - Junio) o 2(Julio - Diciembtre) 
@@ -129,164 +59,197 @@ public class Controller {
 	 */
 	public Controller() {
 		view = new MovingViolationsManagerView();
-		
-		movingViolationsList = new DoubleLinkedList<VOMovingViolations>();
+		model = new MovingViolationsManager();
 	}
 	
 	/**
 	 * Lee la opcion que el usuario escoja para el desarrollo del programa
 	 * @throws Exception 
 	 */
-	public void run() throws Exception {
+	/**
+	 * Metodo encargado de ejecutar los  requerimientos segun la opcion indicada por el usuario
+	 */
+	public void run(){
+
+		long startTime;
+		long endTime;
+		long duration;
+
 		Scanner sc = new Scanner(System.in);
-		boolean fin=false;
+		boolean fin = false;
 		Controller controller = new Controller();
-		
-		while(!fin)
-		{
+
+		while(!fin){
 			view.printMenu();
-			
+
 			int option = sc.nextInt();
-			
-			switch(option)
-			{
-				case 0:
-					view.printMessage("Ingrese el Semestre (1 o 2)");
-					int numeroSemestre = sc.nextInt();
-					if(movingViolationsList.estaVacia()){
-						controller.loadMovingViolations(1);
-					}
+
+			switch(option){
+
+			case 0:
+				view.printMessage("Ingrese semestre a cargar (1 o 2)");
+				int semestre = sc.nextInt();
+				EstadisticasCargaInfracciones resumenCarga = model.loadMovingViolations(semestre);
+
+				//TODO Mostrar resultado de tipo EstadisticasCargaInfracciones con: 
+				//     total de infracciones cargadas, numero de infracciones cargadas por mes y zona Minimax (Xmin, Ymin) y (Xmax, Ymax)
+				//view.printResumenLoadMovingViolations( ... );
+				break;
+
+			case 1:
+				view.printMessage("1A. Consultar las N franjas horarias con mas infracciones que desea ver. Ingresar valor de N: ");
+				int numeroFranjas = sc.nextInt();
+
+				//TODO Completar para la invocación del metodo 1A
+				//model.rankingNFranjas(int N)
 				
-				case 1:
-					break;
-					
-				case 2:
-					break;
-					
-				case 3:
-					break;
-						
-					
-				case 4:
-					break;
-					
-				case 5:
-					break;
+				//TODO Mostrar resultado de tipo Cola con N InfraccionesFranjaHoraria
+				//view.printReq1A( ...);
+				break;
+
+			case 2:
+				view.printMessage("Ingrese la coordenada en X de la localizacion geografica (Ej. 1234,56): ");
+				double xcoord = sc.nextDouble();
+				view.printMessage("Ingrese la coordenada en Y de la localizacion geografica (Ej. 5678,23): ");
+				double ycoord = sc.nextDouble();
+
+				//TODO Completar para la invocación del metodo 2A
+				//model.consultarPorLocalizacionHash(double xCoord, double yCoord)
+
+				//TODO Mostrar resultado de tipo InfraccionesLocalizacion 
+				//view.printReq2A( ... )
+				break;
+
+			case 3:
+				view.printMessage("Ingrese la fecha inicial del rango. Formato año-mes-dia (ej. 2008-06-21)");
+				String fechaInicialStr = sc.next();
+				LocalDate fechaInicial = ManejoFechaHora.convertirFecha_LD( fechaInicialStr );
+
+				view.printMessage("Ingrese la fecha final del rango. Formato año-mes-dia (ej. 2008-06-30)");
+				String fechaFinalStr = sc.next();
+				LocalDate fechaFinal = ManejoFechaHora.convertirFecha_LD( fechaFinalStr );
+
+				//TODO Completar para la invocacion del metodo 3A
+				//model.consultarInfraccionesPorRangoFechas(LocalDate fechaInicial, LocalDate fechaFinal)
+
+				//TODO Mostrar resultado de tipo Cola de InfraccionesFecha
+				//view.printReq3A( ... )
+				break;
+
+
+			case 4:
+				view.printMessage("1B. Consultar los N Tipos con mas infracciones. Ingrese el valor de N: ");
+				int numeroTipos = sc.nextInt();
+
+				//TODO Completar para la invocación del metodo 1B				
+				//model.rankingNViolationCodes(int N)
 				
-				case 6:
-					break;
-					
-				case 7:
-					break;
-					
-				case 8:
-					break;
-					
-				case 9:
-					break;
-				
-				case 10:
-					break;
-					
-				case 11:
-					break;
-				
-				case 12:
-					break;
-					
-				case 13:	
-					fin=true;
-					sc.close();
-					break;
+				//TODO Mostrar resultado de tipo Cola con N InfraccionesViolationCode
+				//view.printReq1B( ... )
+				break;
+
+			case 5:						
+				view.printMessage("Ingrese la coordenada en X de la localizacion geografica (Ej. 1234,56): ");
+				xcoord = sc.nextDouble();
+				view.printMessage("Ingrese la coordenada en Y de la localizacion geografica (Ej. 5678,23): ");
+				ycoord = sc.nextDouble();
+
+				//TODO Completar para la invocación del metodo 2B
+				//model.consultarPorLocalizacionArbol(double xCoord, double yCoord)
+
+				//TODO Mostrar resultado de tipo InfraccionesLocalizacion 
+				//view.printReq2B( ... )
+				break;
+
+			case 6:
+				view.printMessage("Ingrese la cantidad minima de dinero que deben acumular las infracciones en sus rangos de fecha  (Ej. 1234,56)");
+				double cantidadMinima = sc.nextDouble();
+
+				view.printMessage("Ingrese la cantidad maxima de dinero que deben acumular las infracciones en sus rangos de fecha (Ej. 5678,23)");
+				double cantidadMaxima = sc.nextDouble();
+
+				//TODO Completar para la invocación del metodo 3B
+				//model.consultarFranjasAcumuladoEnRango(double valorInicial, double valorFinal)
+
+				//TODO Mostrar resultado de tipo Cola con InfraccionesFechaHora 
+				//view.printReq3B( ... )
+				break;
+
+			case 7:
+				view.printMessage("1C. Consultar las infracciones con Address_Id. Ingresar el valor de Address_Id: ");
+				int addressID = sc.nextInt();
+
+				startTime = System.currentTimeMillis();
+				//TODO Completar para la invocación del metodo 1C
+				//model.consultarPorAddressId(int addressID)
+
+				endTime = System.currentTimeMillis();
+
+				duration = endTime - startTime;
+				view.printMessage("Tiempo requerimiento 1C: " + duration + " milisegundos");
+
+				//TODO Mostrar resultado de tipo InfraccionesLocalizacion 	
+				//view.printReq1C( ... )
+				break;
+
+			case 8:
+				view.printMessage("Ingrese la hora inicial del rango. Formato HH:MM:SS (ej. 09:30:00)");
+				String horaInicialStr = sc.next();
+				LocalTime horaInicial = ManejoFechaHora.convertirHora_LT(horaInicialStr);
+
+				view.printMessage("Ingrese la hora final del rango. Formato HH:MM:SS (ej. 16:00:00)");
+				String horaFinalStr = sc.next();
+				LocalTime horaFinal = ManejoFechaHora.convertirHora_LT(horaFinalStr);
+
+				startTime = System.currentTimeMillis();
+				//TODO Completar para la invocacion del metodo 2C
+				//model.consultarPorRangoHoras(LocalTime horaInicial, LocalTime horaFinal)
+
+				endTime = System.currentTimeMillis();
+
+				duration = endTime - startTime;
+				view.printMessage("Tiempo requerimiento 2C: " + duration + " milisegundos");
+				//TODO Mostrar resultado de tipo InfraccionesFranjaHorarioViolationCode
+				//view.printReq2C( ... )
+				break;
+
+			case 9:
+				view.printMessage("Consultar las N localizaciones geograficas con mas infracciones. Ingrese el valor de N: ");
+				int numeroLocalizaciones = sc.nextInt();
+
+				startTime = System.currentTimeMillis();
+				//TODO Completar para la invocación del metodo 3C
+				//model.rankingNLocalizaciones(int N)
+
+				endTime = System.currentTimeMillis();
+
+				duration = endTime - startTime;
+				view.printMessage("Tiempo requerimiento 3C: " + duration + " milisegundos");
+				//TODO Mostrar resultado de tipo Cola con InfraccionesLocalizacion
+				//view.printReq3C( ... )
+				break;
+
+			case 10:
+
+				System.out.println("Grafica ASCII con la informacion de las infracciones por ViolationCode");
+
+				startTime = System.currentTimeMillis();
+				//TODO Completar para la invocacion del metodo 4C
+				//model.ordenarCodigosPorNumeroInfracciones()
+
+				//TODO Mostrar grafica a partir del resultado del metodo anterior
+				//view.printReq4C( ... )
+				endTime = System.currentTimeMillis();
+
+				duration = endTime - startTime;
+				view.printMessage("Tiempo requerimiento 4C: " + duration + " milisegundos");
+				break;
+
+			case 11:	
+				fin = true;
+				sc.close();
+				break;
 			}
 		}
-
-	}
-
-	
-	/**
-	 * Carga los datos segun el cuatrimestre escogido por el usuario
-	 * @param pSemestre Numero de semestre escogido por el usuario. pSemestre = 1 | pSemestre = 2
-	 * @throws Exception si no pudo cargar los datos.
-	 */
-	public void loadMovingViolations(int pSemestre) throws Exception{
-		// TODO
-		String[] archivos = new String[12];
-		for(int i = 0; i < 12; i++){
-			if(i == 0){archivos[i] = DATOS_MES_1;}
-			else if(i==1){archivos[i] = DATOS_MES_2;}
-			else if(i==2){archivos[i] = DATOS_MES_3;}
-			else if(i==3){archivos[i] = DATOS_MES_4;}
-			else if(i==4){archivos[i] = DATOS_MES_5;}
-			else if(i==5){archivos[i] = DATOS_MES_6;}
-			else if(i==6){archivos[i] = DATOS_MES_7;}
-			else if(i==7){archivos[i] = DATOS_MES_8;}
-			else if(i==8){archivos[i] = DATOS_MES_9;}
-			else if(i==9){archivos[i] = DATOS_MES_10;}
-			else if(i==10){archivos[i] = DATOS_MES_11;}
-			else if(i==11){archivos[i] = DATOS_MES_12;}
-		}
-		
-		String fileName = null;
-		
-		if(pSemestre == 1) {
-			for(int i = 0; i < 6; i++) {
-				fileName = archivos[i];
-				loadArchivo(fileName);
-			}
-		}
-		if(pSemestre == 2) {
-			for(int i = 6; i < 12; i++) {
-				fileName = archivos[i];
-				loadArchivo(fileName);
-			}
-		}
-	}
-	
-
-	public void loadArchivo(String pFileName) {
-		File file = new File(pFileName);
-		try {
-			Scanner inputStream = new Scanner(file);
-			String data = inputStream.next();
-			while(inputStream.hasNext()) {
-				data = inputStream.next();
-				String[] values = data.split(",");
-				movingViolationsList.agregar(new VOMovingViolations(Integer.parseInt(values[0]), values[1], values[2], Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]), Integer.parseInt(values[6]), values[7], Integer.parseInt(values[8]), Integer.parseInt(values[9]), Integer.parseInt(values[10]), Integer.parseInt(values[11]), values[12], Integer.parseInt(values[13]), values[14], values[15], values[16], Integer.parseInt(values[17])));
-			}
-			inputStream.close();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	//------------------------------------------------------------------------------------------
-	// Métodos
-	//------------------------------------------------------------------------------------------
-	
-	//Parte A
-	
-	
-	
-	/**
-	 * Convertir fecha a un objeto LocalDate
-	 * @param fecha fecha en formato dd/mm/aaaa con dd para dia, mm para mes y aaaa para agno
-	 * @return objeto LD con fecha
-	 */
-	private static LocalDate convertirFecha(String fecha)
-	{
-		return LocalDate.parse(fecha, DateTimeFormatter.ofPattern("yyy-MM-dd"));
-	}
-
-	
-	/**
-	 * Convertir fecha y hora a un objeto LocalDateTime
-	 * @param fecha fecha en formato dd/mm/aaaaTHH:mm:ss con dd para dia, mm para mes y aaaa para agno, HH para hora, mm para minutos y ss para segundos
-	 * @return objeto LDT con fecha y hora integrados
-	 */
-	private static LocalDateTime convertirFecha_Hora_LDT(String fechaHora)
-	{
-		return LocalDateTime.parse(fechaHora, DateTimeFormatter.ofPattern("yyyy-MM-dd"+" T "+"kk:mm:ss"));
 	}
 }

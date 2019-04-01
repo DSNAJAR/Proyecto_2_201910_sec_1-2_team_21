@@ -496,7 +496,7 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 	     * @return all keys in the symbol table as an {@code Iterable}
 	     */
 	    public Iterable<Key> keys() {
-	        if (isEmpty()) return (Iterable<Key>) new Queue<Key>();
+	        if (isEmpty()) return (Iterable<Key>) new DoubleLinkedList<Key>();
 	        return keys(min(), max());
 	    }
 
@@ -517,19 +517,19 @@ public class RedBlackBST <Key extends Comparable<Key>, Value>
 
 	        DoubleLinkedList<Key> list = new DoubleLinkedList<Key>();
 	        // if (isEmpty() || lo.compareTo(hi) > 0) return queue;
-	        keys(root, queue, lo, hi);
-	        return (Iterable<Key>) queue;
+	        keys(root, list, lo, hi);
+	        return (Iterable<Key>) list;
 	    } 
 
 	    // add the keys between lo and hi in the subtree rooted at x
 	    // to the queue
-	    private void keys(NodoArbol x, Queue<Key> queue, Key lo, Key hi) { 
+	    private void keys(NodoArbol x, DoubleLinkedList<Key> dList, Key lo, Key hi) { 
 	        if (x == null) return; 
 	        int cmplo = lo.compareTo((Key) x.key); 
 	        int cmphi = hi.compareTo((Key) x.key); 
-	        if (cmplo < 0) keys(x.left, queue, lo, hi); 
-	        if (cmplo <= 0 && cmphi >= 0) queue.enqueue(x.key); 
-	        if (cmphi > 0) keys(x.right, queue, lo, hi); 
+	        if (cmplo < 0) keys(x.left, dList, lo, hi); 
+	        if (cmplo <= 0 && cmphi >= 0) dList.agregar(x.key); 
+	        if (cmphi > 0) keys(x.right, dList, lo, hi); 
 	    } 
 
 	    /**
