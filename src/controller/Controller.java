@@ -4,6 +4,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -68,8 +69,9 @@ public class Controller {
 	 */
 	/**
 	 * Metodo encargado de ejecutar los  requerimientos segun la opcion indicada por el usuario
+	 * @throws IOException 
 	 */
-	public void run(){
+	public void run() throws IOException{
 
 		long startTime;
 		long endTime;
@@ -90,10 +92,10 @@ public class Controller {
 				view.printMessage("Ingrese semestre a cargar (1 o 2)");
 				int semestre = sc.nextInt();
 				EstadisticasCargaInfracciones resumenCarga = model.loadMovingViolations(semestre);
-
+				
 				//TODO Mostrar resultado de tipo EstadisticasCargaInfracciones con: 
 				//     total de infracciones cargadas, numero de infracciones cargadas por mes y zona Minimax (Xmin, Ymin) y (Xmax, Ymax)
-				//view.printResumenLoadMovingViolations( ... );
+				view.printResumenLoadMovingViolations(resumenCarga);
 				break;
 
 			case 1:

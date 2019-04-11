@@ -126,7 +126,6 @@ public class EstadisticaInfracciones {
 	 *
 	 * @param listaInfracciones the new lista infracciones
 	 */
-	
 	public void setListaInfracciones(IQueue<VOMovingViolations> listaInfracciones) {
 		this.listaInfracciones = listaInfracciones;
 	}

@@ -1,12 +1,21 @@
 package model.logic;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.Scanner;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import model.data_structures.DoubleLinkedList;
 import model.data_structures.IQueue;
+import model.data_structures.MaxPQ;
+import model.data_structures.Nodo;
 import model.vo.EstadisticaInfracciones;
 import model.vo.EstadisticasCargaInfracciones;
 import model.vo.InfraccionesFecha;
@@ -20,72 +29,70 @@ import model.vo.VOMovingViolations;
 public class MovingViolationsManager {
 	
 	//---------------------------------------------------------------------------------------------------
-		// Constantes
-		// --------------------------------------------------------------------------------------------------
+	// Constantes
+	// --------------------------------------------------------------------------------------------------
 
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Enero
-		 */
-		public static final String DATOS_MES_1 = "./data/Moving_Violations_Issued_in_January_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Febrero
-		 */
-		public static final String DATOS_MES_2 = "./data/Moving_Violations_Issued_in_February_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Marzo
-		 */
-		public static final String DATOS_MES_3 = "./data/Moving_Violations_Issued_in_March_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Abril
-		 */
-		public static final String DATOS_MES_4 = "./data/Moving_Violations_Issued_in_April_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Mayo
-		 */
-		public static final String DATOS_MES_5 = "./data/Moving_Violations_Issued_in_May_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Junio
-		 */
-		public static final String DATOS_MES_6= "./data/Moving_Violations_Issued_in_June_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Julio
-		 */
-		public static final String DATOS_MES_7 = "./data/Moving_Violations_Issued_in_July_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Agosto
-		 */
-		public static final String DATOS_MES_8 = "./data/Moving_Violations_Issued_in_August_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Septiembre
-		 */
-		public static final String DATOS_MES_9 = "./data/Moving_Violations_Issued_in_September_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Octubre
-		 */
-		public static final String DATOS_MES_10 = "./data/Moving_Violations_Issued_in_Octomber_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Noviembre
-		 */
-		public static final String DATOS_MES_11 = "./data/Moving_Violations_Issued_in_November_2018.csv";
-		
-		/**
-		 * Constante que representa los datos de las infracciones realizadas en Diciembre
-		 */
-		public static final String DATOS_MES_12 = "./data/Moving_Violations_Issued_in_December_2018.csv";
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Enero
+	 */
+	public static final String DATOS_MES_1 = "./data/Moving_Violations_Issued_in_January_2018.csv";
 	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Febrero
+	 */
+	public static final String DATOS_MES_2 = "./data/Moving_Violations_Issued_in_February_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Marzo
+	 */
+	public static final String DATOS_MES_3 = "./data/Moving_Violations_Issued_in_March_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Abril
+	 */
+	public static final String DATOS_MES_4 = "./data/Moving_Violations_Issued_in_April_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Mayo
+	 */
+	public static final String DATOS_MES_5 = "./data/Moving_Violations_Issued_in_May_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Junio
+	 */
+	public static final String DATOS_MES_6= "./data/Moving_Violations_Issued_in_June_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Julio
+	 */
+	public static final String DATOS_MES_7 = "./data/Moving_Violations_Issued_in_July_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Agosto
+	 */
+	public static final String DATOS_MES_8 = "./data/Moving_Violations_Issued_in_August_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Septiembre
+	 */
+	public static final String DATOS_MES_9 = "./data/Moving_Violations_Issued_in_September_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Octubre
+	 */
+	public static final String DATOS_MES_10 = "./data/Moving_Violations_Issued_in_Octomber_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Noviembre
+	 */
+	public static final String DATOS_MES_11 = "./data/Moving_Violations_Issued_in_November_2018.csv";
+	
+	/**
+	 * Constante que representa los datos de las infracciones realizadas en Diciembre
+	 */
+	public static final String DATOS_MES_12 = "./data/Moving_Violations_Issued_in_December_2018.csv";
 	//TODO Definir atributos necesarios
 	
-
 	/**
 	 * Lista doble donde se van a cargar los datos de los archivos
 	 */
@@ -104,8 +111,9 @@ public class MovingViolationsManager {
 	 * Cargar las infracciones de un semestre de 2018
 	 * @param numeroSemestre numero del semestre a cargar (1 o 2)
 	 * @return objeto con el resultado de la carga de las infracciones
+	 * @throws IOException 
 	 */
-	public EstadisticasCargaInfracciones loadMovingViolations(int numeroSemestre) {
+	public EstadisticasCargaInfracciones loadMovingViolations(int numeroSemestre) throws IOException {
 		// TODO Realizar la carga de infracciones del semestre
 		String[] archivos = new String[12];
 		for(int i = 0; i < 12; i++){
@@ -124,39 +132,84 @@ public class MovingViolationsManager {
 		}
 		
 		String fileName = null;
-		
+		int[] infraccionesxMesSemestre = new int[6];
+		Object[] x = null;
 		if(numeroSemestre == 1) {
 			for(int i = 0; i < 6; i++) {
 				fileName = archivos[i];
-				loadArchivo(fileName);
+				x = loadArchivo(fileName);
+				infraccionesxMesSemestre[i] = (int) x[0];
 			}
 		}
 		if(numeroSemestre == 2) {
 			for(int i = 6; i < 12; i++) {
 				fileName = archivos[i];
-				loadArchivo(fileName);
+				x = loadArchivo(fileName);
+				infraccionesxMesSemestre[i - 6] = (int) x[0];
 			}
 		}
-		return null;
+		
+		int suma = 0;
+		for(int i = 0; i < infraccionesxMesSemestre.length; i++) suma += infraccionesxMesSemestre[i];
+		
+		return new EstadisticasCargaInfracciones(suma, infraccionesxMesSemestre, (double) x[1], (double) x[2], (double) x[3], (double) x[4]);
 	}
 	
 	//Método auxiliar
 	
-	public void loadArchivo(String pFileName) {
+	public Object[] loadArchivo(String pFileName) throws IOException {
+		BufferedReader br = null;
+		String line = " ";
 		File file = new File(pFileName);
+		int numeroInfracciones = 0;
+		double minX = 0.0;
+		double minY = 0.0;
+		double maxX = 0.0;
+		double maxY = 0.0;
+		
 		try {
-			Scanner inputStream = new Scanner(file);
-			String data = inputStream.next();
-			while(inputStream.hasNext()) {
-				data = inputStream.next();
-				String[] values = data.split(",");
-				movingViolationsList.agregar(new VOMovingViolations());
+			br = new BufferedReader(new FileReader(file));
+			
+			while((line = br.readLine()) != null) {
+				String[] datos = line.split(",");				
+				
+				int objectId = Integer.parseInt(datos[0]);
+				String row = datos[1];
+				String rowLocation = datos[2];
+				int addresId = Integer.parseInt(datos[3]);
+				int streetSegId = Integer.parseInt(datos[4]);
+				double xCoord = Double.parseDouble(datos[5]);
+				double yCoord = Double.parseDouble(datos[6]);
+				String ticketType = datos[7];
+			    int fineAMT = Integer.parseInt(datos[8]);
+			    int totalPaid = Integer.parseInt(datos[9]);
+				int penal1 = Integer.parseInt(datos[10]);
+				int penal2 = Integer.parseInt(datos[11]);
+				String accidentIndicator = datos[12];
+				int agencyId = 0;
+				String ticketIssueDate = datos[13];
+				String violationCode = datos[14];
+				String violationDesc = datos[15];
+			    String rowId = datos[16];
+				
+			    numeroInfracciones++;
+			    movingViolationsList.agregar(new VOMovingViolations(objectId, rowLocation, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc, rowId));
+			    if(Double.compare(maxX, xCoord) < 0) maxX = xCoord;
+			    if(Double.compare(maxY, yCoord) < 0) maxY = yCoord;
+			    if(minX == 0.0) minX = xCoord; else if(Double.compare(minX, xCoord) > 0) minX = xCoord;
+			    if(minY == 0.0) minY = yCoord; else if(Double.compare(minY, yCoord) > 0) minY = yCoord;
 			}
-			inputStream.close();
+			
+			br.close();
+		}
+		catch(FileNotFoundException e) {
+			e.printStackTrace();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		Object[] x = {numeroInfracciones, minX, minY, maxX, maxY};
+		return x;
 	}
 
 	/**
@@ -168,7 +221,8 @@ public class MovingViolationsManager {
 	public IQueue<InfraccionesFranjaHoraria> rankingNFranjas(int N)
 	{
 		// TODO completar
-		return null;		
+		MaxPQ x = null;
+		return x;
 	}
 	
 	/**
@@ -181,7 +235,12 @@ public class MovingViolationsManager {
 	public InfraccionesLocalizacion consultarPorLocalizacionHash(double xCoord, double yCoord)
 	{
 		// TODO completar
-		return null;		
+		Nodo x = movingViolationsList.getFirst();
+		VOMovingViolations z = null;
+		while(x != null) {
+			z = (VOMovingViolations) x.getItem();
+		}
+		return ;		
 	}
 	
 	/**

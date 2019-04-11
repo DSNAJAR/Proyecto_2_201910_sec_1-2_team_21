@@ -4,26 +4,27 @@ import java.util.Iterator;
 
 public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTable{
 	
-	private int M = 97; // number of chains
-	
+	private int n;       // number of key-value pairs
+    private int M;       // hash table size
 	private NodoHT[] st = new NodoHT[M]; // array of chains
 	
 	public SeparateChainingHT(int m) {
         this.M = m;
-        st = (SequentialSearchST<Key, Value>[]) new SequentialSearchST[m];
-        for (int i = 0; i < m; i++)
-            st[i] = new SequentialSearchST<Key, Value>();
+        st = new NodoHT[m];
     } 
 	
 	@Override
 	public void put(Comparable key, Object value) {
 		// TODO Auto-generated method stub
 		int i = hash(key);
-		for (NodoHT x = st[i]; x != null; x = x.getNext())
-			if (key.equals(x.getNext())) {
-				x.changeValue(value);;
+		for (NodoHT x = st[i]; x != null; x = x.getNext()) {
+			if (key.compareTo(x.getNext()) == 0) {
+				x.changeValue(value);
 				return;
 			}
+		}
+		if (n >= 10*M) resize(2*M);
+		n++;
 		st[i] = new NodoHT(key, value, st[i]);
 	}
 
@@ -31,10 +32,10 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
 	public Object get(Comparable key) {
 		// TODO Auto-generated method stub
 		int i = hash(key);
-		System.out.println(i);
 		for (NodoHT x = st[i]; x != null; x = x.getNext())
-			if (key.equals(x.getKey())) 
+			if (key.equals(x.getKey())) {
 				return  (V) x.getValue();
+			}
 		return null;
 	}
 
@@ -42,11 +43,25 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
 	public Object delete(Comparable key) {
 		// TODO Auto-generated method stub
         int i = hash(key);
-        if (st[i].getKey().equals(key)) n--;
-        st[i].delete(key);
+        NodoHT x = st[i];
+        NodoHT rt = x;
+        NodoHT siguiente = null;
+        if (st[i].getKey().equals(key)) {
+        	n--;
+        	if(x.getNext() != null) {
+        		siguiente = x.getNext();
+        		x.setNext(null);
+        		x = siguiente;
+        		x.setNext(siguiente.getNext());
+        	}
+        	else{
+        		x = null;
+        	}
+        }
 
         // halve table size if average length of list <= 2
-        if (m > INIT_CAPACITY && n <= 2*m) resize(m/2);
+        if (n <= 2*M) resize(M/2);
+		return rt;
 	}
 	
 	private int hash(Comparable key)
@@ -60,19 +75,27 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
     }
 	
 	private void resize(int chains) {
-        Separa temp = new SeparateChainingHashST<Key, Value>(chains);
-        for (int i = 0; i < m; i++) {
-            for (Key key : st[i].keys()) {
-                temp.put(key, st[i].get(key));
+		SeparateChainingHT temp = new SeparateChainingHT<K, V>(chains);
+        for (int i = 0; i < M; i++) {
+            while(this.iterator().hasNext()) {
+            	Iterator x = iterator();
+            	NodoHT nodo = (NodoHT) x.next();
+            	temp.put((Comparable) nodo.getKey(), nodo.getValue());
             }
         }
-        this.m  = temp.m;
+        this.M  = temp.M;
         this.n  = temp.n;
         this.st = temp.st;
     }
 	@Override
 	public Iterator iterator() {
 		// TODO Auto-generated method stub
-		return null;
+		Queue<K> queue = new Queue<K>();
+        for (int i = 0; i < M; i++) {
+            for (NodoHT x = st[i]; x != null; x = x.getNext()) {
+                queue.enqueue( (K) x.getKey());
+            }
+        }
+        return (Iterator) queue;
 	}
 }
