@@ -21,9 +21,9 @@ public class DoubleLinkedList <T extends Comparable<T>> implements ILinkedList{
 	
 	public DoubleLinkedList() {
 		// TODO Auto-generated constructor stub
-		first = new Nodo<T>(null, null, null);
-		last = new Nodo<T>(null, first, null);
-		first.cambiarSiguiente(last);
+		first = null;
+		last = null;
+		size = 0;
 	}
 	
 	/**
@@ -66,29 +66,36 @@ public class DoubleLinkedList <T extends Comparable<T>> implements ILinkedList{
 	 * Anhade un elemento a la lista en la primera posición
 	 * @param item. Item a añadir a la lista.
 	 */
-	public void addFirst ( Comparable<T>  item ) 
-	{
-		addBetween(item, null, first);
+	public void addFirst ( Comparable<T>  item ) {
+		Nodo<T> nodo = new Nodo<T>((T) item);
+		
+		if( first == null ) {
+			first = nodo;
+			last = nodo;
+		}
+		else {
+			nodo.cambiarSiguiente(first);
+			first.cambiarAnterior(nodo);
+			first = nodo;
+		}
+		size++;
 	}
 	/**
 	 * Anhade un elemento a la lista en la ultima posisión.
 	 * @param item. Item a añadir a la lista.
 	 */
-	public void addLast ( Comparable<T> item )
-	{
-		addBetween(item , last, null);
-	}
-	/**
-	 * Anhade un elemento entre dos nodos dados por parametros. 
-	 * @param item. Item a añadir a lista
-	 * @param predecesor. Nodo predecesor al que se quiere añadir.
-	 * @param sucesor. Nodo sucesor al que se quiere añadir.
-	 */
-	public void addBetween(Comparable<T> item, Nodo<T> anterior, Nodo<T> siguiente)
-	{
-		Nodo<T> nuevo = new Nodo<T>( (T) item, anterior, siguiente);
-		anterior.cambiarSiguiente(nuevo);
-		siguiente.cambiarAnterior(nuevo);
+	public void addLast ( Comparable<T> item ) {
+		Nodo<T> nodo = new Nodo<T>((T) item);
+		
+		if( first == null ) {
+			first = nodo;
+			last = nodo;
+		}
+		else {
+			nodo.cambiarAnterior(last);
+			last.cambiarSiguiente(nodo);
+			last = nodo;
+		}
 		size++;
 	}
 	

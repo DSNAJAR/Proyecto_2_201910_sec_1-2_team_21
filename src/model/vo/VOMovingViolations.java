@@ -52,7 +52,7 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 	/**
 	 * Cuanto dinero pagó el que recibió la multa
 	 */
-	private int totalPaid;
+	private double totalPaid;
 	
 	/**
 	 * Dinero extra que debe pagar el conductor
@@ -77,7 +77,7 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 	/**
 	 * Fecha cuando se puso la infracción
 	 */
-	private Date ticketIssueDate;
+	private String ticketIssueDate;
 	
 	/**
 	 * Código de la infracción
@@ -88,16 +88,14 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 	 * Descripción textual de la infracción
 	 */
 	private String violationDesc;
-	
-	private String rowId;
 	/**
 	 * Es el formato que se usara para las fechas
 	 */
-	private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	//private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	//Constructor
 	
-	public VOMovingViolations( int pObjectId, String pLocation, int pAddrresId, int pStreetSegId,double pXCoord, double pYCoord, String pTicketType, int pSumaFINEAMT, int pTotalPaid, int pPenal1, int pPenal2, String pAccidentIndicator, String pTicketIssueDate, String pViolationCode, String pViolationDescription, String pRowId) throws ParseException
+	public VOMovingViolations( int pObjectId, String pLocation, int pAddrresId, int pStreetSegId,double pXCoord, double pYCoord, String pTicketType, int pSumaFINEAMT, double pTotalPaid, int pPenal1, int pPenal2, String pAccidentIndicator, String pTicketIssueDate, String pViolationCode, String pViolationDescription) throws ParseException
 	{
 		// TODO Implementar
 		objectId = pObjectId;
@@ -113,10 +111,9 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 		penal2 = pPenal2;
 		accidentIndicator =  pAccidentIndicator;
 		agencyId = 0;
-		ticketIssueDate = format.parse(pTicketIssueDate);
+		ticketIssueDate = pTicketIssueDate;
 		violationCode = pViolationCode;
 		violationDesc = pViolationDescription;
-		rowId = pRowId;
 	}	
 	
 	@Override
@@ -149,7 +146,7 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 	/**
 	 * @return date - Fecha cuando se puso la infracciÃ³n .
 	 */
-	public Date getTicketIssueDate() {
+	public String getTicketIssueDate() {
 		// TODO Auto-generated method stub
 		return ticketIssueDate;
 	}
@@ -157,7 +154,7 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 	/**
 	 * @return totalPaid - Cuanto dinero efectivamente pagÃ³ el que recibiÃ³ la infracciÃ³n en USD.
 	 */
-	public int getTotalPaid() {
+	public double getTotalPaid() {
 		// TODO Auto-generated method stub
 		return totalPaid;
 	}

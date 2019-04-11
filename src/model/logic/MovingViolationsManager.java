@@ -137,15 +137,15 @@ public class MovingViolationsManager {
 		if(numeroSemestre == 1) {
 			for(int i = 0; i < 6; i++) {
 				fileName = archivos[i];
-				x = loadArchivo(fileName);
-				infraccionesxMesSemestre[i] = (int) x[0];
+				loadArchivo(fileName);
+				//infraccionesxMesSemestre[i] = (int) x[0];
 			}
 		}
 		if(numeroSemestre == 2) {
 			for(int i = 6; i < 12; i++) {
 				fileName = archivos[i];
-				x = loadArchivo(fileName);
-				infraccionesxMesSemestre[i - 6] = (int) x[0];
+				loadArchivo(fileName);
+				//infraccionesxMesSemestre[i - 6] = (int) x[0];
 			}
 		}
 		
@@ -157,10 +157,10 @@ public class MovingViolationsManager {
 	
 	//Método auxiliar
 	
-	public Object[] loadArchivo(String pFileName) throws IOException {
+	public void loadArchivo(String pFileName) throws IOException {
 		BufferedReader br = null;
 		String line = " ";
-		File file = new File(pFileName);
+		FileReader file = new FileReader(pFileName);
 		int numeroInfracciones = 0;
 		double minX = 0.0;
 		double minY = 0.0;
@@ -168,32 +168,43 @@ public class MovingViolationsManager {
 		double maxY = 0.0;
 		
 		try {
-			br = new BufferedReader(new FileReader(file));
-			
+			br = new BufferedReader(file);
+			line = br.readLine();
 			while((line = br.readLine()) != null) {
 				String[] datos = line.split(",");				
 				
-				int objectId = Integer.parseInt(datos[0]);
-				String row = datos[1];
-				String rowLocation = datos[2];
-				int addresId = Integer.parseInt(datos[3]);
-				int streetSegId = Integer.parseInt(datos[4]);
+				int objectId = 0;
+				if(!datos[0].isEmpty()) objectId = Integer.parseInt(datos[0]);
+				
+				String location = datos[2];
+				
+				int addresId = 0;
+				if(!datos[3].isEmpty()) addresId = Integer.parseInt(datos[3]);
+				
+				int streetSegId = 0;
+				if(!datos[4].isEmpty()) streetSegId = Integer.parseInt(datos[4]);
+				
 				double xCoord = Double.parseDouble(datos[5]);
 				double yCoord = Double.parseDouble(datos[6]);
 				String ticketType = datos[7];
 			    int fineAMT = Integer.parseInt(datos[8]);
-			    int totalPaid = Integer.parseInt(datos[9]);
-				int penal1 = Integer.parseInt(datos[10]);
-				int penal2 = Integer.parseInt(datos[11]);
+			    double totalPaid = Double.parseDouble(datos[9]);
+			    
+			    int penal1 = 0;
+			    if(!datos[10].isEmpty()) penal1 = Integer.parseInt(datos[10]); 
+
+			    int penal2 = 0;
+			    if(!datos[11].isEmpty()) penal2 = Integer.parseInt(datos[11]);
+			    
 				String accidentIndicator = datos[12];
 				int agencyId = 0;
 				String ticketIssueDate = datos[13];
 				String violationCode = datos[14];
 				String violationDesc = datos[15];
-			    String rowId = datos[16];
+				
 				
 			    numeroInfracciones++;
-			    movingViolationsList.agregar(new VOMovingViolations(objectId, rowLocation, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc, rowId));
+			    movingViolationsList.agregar(new VOMovingViolations(objectId, location, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc));
 			    if(Double.compare(maxX, xCoord) < 0) maxX = xCoord;
 			    if(Double.compare(maxY, yCoord) < 0) maxY = yCoord;
 			    if(minX == 0.0) minX = xCoord; else if(Double.compare(minX, xCoord) > 0) minX = xCoord;
@@ -205,11 +216,13 @@ public class MovingViolationsManager {
 		catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		catch(IOException e) {
+			throw new IOException("Error al leer el archivo");
+		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		Object[] x = {numeroInfracciones, minX, minY, maxX, maxY};
-		return x;
 	}
 
 	/**

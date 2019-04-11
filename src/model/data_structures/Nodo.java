@@ -8,13 +8,13 @@ public class Nodo <T extends Comparable<T>>
 	
 	private Nodo<T> anterior;
 	
-	public Nodo(T pItem, Nodo<T> pAnterior, Nodo<T> pSiguiente)
+	public Nodo(T pItem)
 	{
 		this.item = pItem;
 		
-		this.siguiente = pSiguiente;
+		this.siguiente = null;
 		
-		this.anterior = pAnterior;
+		this.anterior = null;
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class Nodo <T extends Comparable<T>>
 	 */
 	public void cambiarSiguiente ( Nodo<T> pSiguiente ) 
 	{
-		this.siguiente = siguiente ;
+		this.siguiente = pSiguiente ;
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class Nodo <T extends Comparable<T>>
 	 */
 	public void cambiarAnterior ( Nodo<T> pAnterior )
 	{
-		this.anterior = anterior;		
+		this.anterior = pAnterior;		
 	}
 	
 	/**
