@@ -4,12 +4,13 @@ import java.util.Iterator;
 
 public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTable{
 	
+	
 	private int n;       // number of key-value pairs
     private int M;       // hash table size
 	private NodoHT[] st = new NodoHT[M]; // array of chains
 	
 	public SeparateChainingHT(int m) {
-        this.M = m;
+        this.M = view.MovingViolationsManagerView.N;
         st = new NodoHT[m];
     } 
 	

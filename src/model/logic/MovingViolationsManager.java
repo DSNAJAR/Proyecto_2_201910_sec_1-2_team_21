@@ -16,6 +16,8 @@ import model.data_structures.DoubleLinkedList;
 import model.data_structures.IQueue;
 import model.data_structures.MaxPQ;
 import model.data_structures.Nodo;
+import model.data_structures.Queue;
+import model.data_structures.SeparateChainingHT;
 import model.vo.EstadisticaInfracciones;
 import model.vo.EstadisticasCargaInfracciones;
 import model.vo.InfraccionesFecha;
@@ -24,6 +26,7 @@ import model.vo.InfraccionesFranjaHoraria;
 import model.vo.InfraccionesFranjaHorariaViolationCode;
 import model.vo.InfraccionesLocalizacion;
 import model.vo.InfraccionesViolationCode;
+import model.vo.KeyCoordenadas;
 import model.vo.VOMovingViolations;
 
 public class MovingViolationsManager {
@@ -31,7 +34,6 @@ public class MovingViolationsManager {
 	//---------------------------------------------------------------------------------------------------
 	// Constantes
 	// --------------------------------------------------------------------------------------------------
-
 	/**
 	 * Constante que representa los datos de las infracciones realizadas en Enero
 	 */
@@ -94,9 +96,9 @@ public class MovingViolationsManager {
 	//TODO Definir atributos necesarios
 	
 	/**
-	 * Lista doble donde se van a cargar los datos de los archivos
+	 * Cola donde se van a cargar los datos de los archivos
 	 */
-	private DoubleLinkedList<VOMovingViolations> movingViolationsList;		
+	private IQueue<VOMovingViolations> movingViolationsQueue;		
 		
 	/**
 	 * Metodo constructor
@@ -104,7 +106,7 @@ public class MovingViolationsManager {
 	public MovingViolationsManager()
 	{
 		//TODO inicializar los atributos
-		movingViolationsList = new DoubleLinkedList<VOMovingViolations>();
+		movingViolationsList = new Queue<VOMovingViolations>();
 	}
 	
 	/**
@@ -157,7 +159,7 @@ public class MovingViolationsManager {
 	
 	//Método auxiliar
 	
-	public void loadArchivo(String pFileName) throws IOException {
+	public Object[] loadArchivo(String pFileName) throws IOException {
 		BufferedReader br = null;
 		String line = " ";
 		FileReader file = new FileReader(pFileName);
@@ -204,7 +206,7 @@ public class MovingViolationsManager {
 				
 				
 			    numeroInfracciones++;
-			    movingViolationsList.agregar(new VOMovingViolations(objectId, location, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc));
+			    movingViolationsList.enqueue(new VOMovingViolations(objectId, location, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc));
 			    if(Double.compare(maxX, xCoord) < 0) maxX = xCoord;
 			    if(Double.compare(maxY, yCoord) < 0) maxY = yCoord;
 			    if(minX == 0.0) minX = xCoord; else if(Double.compare(minX, xCoord) > 0) minX = xCoord;
@@ -212,6 +214,7 @@ public class MovingViolationsManager {
 			}
 			
 			br.close();
+			System.out.println(numeroInfracciones);
 		}
 		catch(FileNotFoundException e) {
 			e.printStackTrace();
@@ -223,6 +226,7 @@ public class MovingViolationsManager {
 			e.printStackTrace();
 		}
 		Object[] x = {numeroInfracciones, minX, minY, maxX, maxY};
+		return x;
 	}
 
 	/**
@@ -234,8 +238,9 @@ public class MovingViolationsManager {
 	public IQueue<InfraccionesFranjaHoraria> rankingNFranjas(int N)
 	{
 		// TODO completar
-		MaxPQ x = null;
-		return x;
+		MaxPQ<Integer, InfraccionesFranjaHoraria> x = new MaxPQ<Integer, InfraccionesFranjaHoraria>(N);
+		x;
+		return (IQueue) x;
 	}
 	
 	/**
@@ -248,7 +253,39 @@ public class MovingViolationsManager {
 	public InfraccionesLocalizacion consultarPorLocalizacionHash(double xCoord, double yCoord)
 	{
 		// TODO completar
-		Nodo x = movingViolationsList.getFirst();
+		class KeyCoordenadas implements Comparable<KeyCoordenadas> {
+			String xCoord;
+			String yCoord;
+			
+			public KeyCoordenadas(Double pXCoord, Double pYCoord)
+			{
+				xCoord = pXCoord.toString();
+				yCoord = pYCoord.toString();
+				
+			}
+			
+			public String toString()
+			{
+				return xCoord + yCoord;
+			}
+
+			@Override
+			public int compareTo(KeyCoordenadas o) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+		}
+		
+		IQueue<VOMovingViolations> queue = movingViolationsQueue;
+		IQueue<VOMovingViolations> aux = new Queue<VOMovingViolations>();
+		VOMovingViolations x = null;
+		SeparateChainingHT<KeyCoordenadas, EstadisticaInfracciones> ht = new SeparateChainingHT<>(m);
+		while((x = queue.dequeue()) != null) {
+			if()
+		}
+		
+		InfraccionesLocalizacion z = new InfraccionesLocalizacion(xCoord, yCoord, locat, address, street, lista)
+		Nodo x = movingViolationsQueue.;
 		VOMovingViolations z = null;
 		while(x != null) {
 			z = (VOMovingViolations) x.getItem();

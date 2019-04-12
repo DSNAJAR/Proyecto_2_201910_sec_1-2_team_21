@@ -2,14 +2,14 @@ package model.data_structures;
 
 import java.util.Iterator;
 
-public class MaxPQ <Key extends Comparable<Key>> implements IQueue<Key>{
-
+public class MaxPQ <Key extends Comparable<Key>, T> implements IQueue<T>{
 	private Key[] pq;
 	private int N;
 
 	@SuppressWarnings("unchecked")
 	public MaxPQ(int capacity) {
 		pq = (Key[]) new Comparable[capacity + 1];
+		N = 0;
 	}
 
 	/**
@@ -89,34 +89,21 @@ public class MaxPQ <Key extends Comparable<Key>> implements IQueue<Key>{
 		pq[++N] = x;
 		swim(N);
 	}
-	
-	
-	public static void main(String...arg) {
-		int[] h = {4, 5, 6, 67, 8, 8};
-		MaxPQ<Integer> ff = new MaxPQ<Integer>(h.length);
-		for(Integer ha: h) {
-			ff.insert(ha);
-		}
-		 
-		for(int i= 0; i<h.length; i++) {
-			System.out.println(ff.delMax());
-		}
-	}
 
 	@Override
-	public Iterator<Key> iterator() {
+	public Iterator<T> iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void enqueue(Key item) {
+	public void enqueue(T item) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public Key dequeue() {
+	public T dequeue() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -124,6 +111,6 @@ public class MaxPQ <Key extends Comparable<Key>> implements IQueue<Key>{
 	@Override
 	public int size() {
 		// TODO Auto-generated method stub
-		return 0;
+		return N;
 	}
 }

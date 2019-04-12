@@ -2,10 +2,10 @@ package model.data_structures;
 
 import java.util.Iterator;
 
-public class Queue<T extends Comparable<T>> implements IQueue<T>  {
+public class Queue<T> implements IQueue<T>  {
 
 	
-	class Node <T extends Comparable<T>>
+	class Node <T>
 	{
 		public T item;
 		
