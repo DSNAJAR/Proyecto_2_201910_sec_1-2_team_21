@@ -21,5 +21,5 @@ public interface IHashTable<K, V> extends Iterable<K>{
 	 * @param key - Llave asociada al valor V.
 	 * @return valor V. Se obtiene null si la llave K no existe.
 	 */
-	public V delete(K key);
+	public void delete(K key);
 }

@@ -3,21 +3,18 @@ package model.data_structures;
 import java.util.Iterator;
 
 public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTable{
-	
-	
 	private int n;       // number of key-value pairs
-    private int M;       // hash table size
-	private NodoHT[] st = new NodoHT[M]; // array of chains
+    private int M;       // hash table size 
+	private LinkedListHT<K, V>[] st;// array of chains
 	
 	public SeparateChainingHT( ) {
         this.M = view.MovingViolationsManagerView.N;
-        st = new NodoHT[M];
-    } 
+        st = (LinkedListHT<K, V>[]) new LinkedListHT[M];
+        for (int i = 0; i < M; i++)
+            st[i] = new LinkedListHT<K, V>();
+    }
 	
-	
-	
-	private int hash(K key)
-	{
+	private int hash(K key) {
 		return (key.hashCode() & 0x7fffffff) % M;
 	}
 	
@@ -39,47 +36,38 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
         this.n  = temp.n;
         this.st = temp.st;
     }
-
-
-
-	@Override
-	public Iterator iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
+	
 	@Override
 	public void put(Object key, Object value) {
 		// TODO Auto-generated method stub
 		int i = hash((K) key);
-		for (NodoHT x = st[i]; x != null; x = x.getNext()) {
-			if (key.equals(x.getKey()))
-			{
-				x.changeValue(value);;
-				System.out.println("Cambio valor");
-				return;
-			}
-		}
-		if (n >= 10*M) resize(2*M);
-		n++;
-		st[i] = new NodoHT(key, value, st[i]);
+        if (!st[i].contains((K) key)) n++;
+        st[i].put((K) key, (V) value);
 	}
-
-
 
 	@Override
 	public Object get(Object key) {
 		// TODO Auto-generated method stub
-		return null;
+		int i = hash((K) key);
+        return st[i].get((K) key);
 	}
 
-
-
 	@Override
-	public Object delete(Object key) {
+	public void delete(Object key) {
 		// TODO Auto-generated method stub
-		return null;
+		int i = hash((K) key);
+        if (st[i].contains((K) key)) n--;
+        st[i].delete((K) key);
+	}
+	
+	@Override
+	public Iterator<K> iterator() {
+		// TODO Auto-generated method stub
+		IQueue<K> queue = new Queue<K>();
+        for (int i = 0; i < M; i++) {
+            for (K key : st[i].keys())
+                queue.enqueue(key);
+        }
+        return queue.iterator();
 	}
 }
