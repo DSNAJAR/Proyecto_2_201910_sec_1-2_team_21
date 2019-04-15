@@ -23,9 +23,9 @@ public class LinearProbingHT <K extends Comparable<K>, V> implements IHashTable{
 	@Override
 	public Iterator<K> iterator() {
 		// TODO Auto-generated method stub
-		DoubleLinkedList<K> list = new DoubleLinkedList<K>();
+		IQueue<K> list = new Queue<K>();
         for (int i = 0; i < M; i++) {
-        	if (keys[i] != null) list.agregar(keys[i]);
+        	if (keys[i] != null) list.enqueue(keys[i]);
         }
              return (Iterator<K>) list;
 	}

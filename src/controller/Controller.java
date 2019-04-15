@@ -20,8 +20,6 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.sun.xml.internal.ws.util.StringUtils;
 
 import jdk.nashorn.internal.runtime.arrays.IteratorAction;
-import model.data_structures.DoubleLinkedList;
-import model.data_structures.Nodo;
 import model.logic.ManejoFechaHora;
 import model.logic.MovingViolationsManager;
 import model.vo.EstadisticasCargaInfracciones;

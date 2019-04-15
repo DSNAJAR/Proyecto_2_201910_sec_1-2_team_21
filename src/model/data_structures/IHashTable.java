@@ -1,6 +1,6 @@
 package model.data_structures;
 
-public interface IHashTable<K extends Comparable<K>, V> extends Iterable<K>{
+public interface IHashTable<K, V> extends Iterable<K>{
 	
 	/**
 	 * Agregar una dupla K,V) a la tabla. Si la llave K existe, se reemplaza su valor V asociado. V no puede ser null.

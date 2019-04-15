@@ -1,8 +1,8 @@
 package model.data_structures;
-
+	
 import java.util.Iterator;
 
-public class RedBlackBST<Key extends Comparable<Key>, Value extends Comparable<Value>> {
+public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	
 	//Constantes
 	
@@ -188,7 +188,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value extends Comparable<V
 	 * @return iterator
 	 */
 	public Iterator<Key> keys() {
-		if (isEmpty()) return (Iterator<Key>) new DoubleLinkedList<Key>();
+		if (isEmpty()) return (Iterator<Key>) new Queue<Key>();
         return keysInRange(min(), max());
 	}
 	
@@ -199,7 +199,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value extends Comparable<V
 	 * @return iterator
 	 */
 	public Iterator<Key> keysInRange(Key init, Key end) {
-	    DoubleLinkedList<Key> list = new DoubleLinkedList<Key>();
+	    IQueue<Key> list = new Queue<Key>();
 	    keys(root, list, init, end);
 	    
 	    return (Iterator<Key>) list;
@@ -212,7 +212,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value extends Comparable<V
 	 * @return iterator
 	 */
 	public Iterator<Value> valuesInRange(Key init, Key end) {
-		DoubleLinkedList<Value> list = new DoubleLinkedList<Value>();
+		IQueue<Value> list = new Queue<Value>();
 	    values(root, list, init, end);
 	    
 	    return (Iterator<Value>) list;
@@ -276,21 +276,21 @@ public class RedBlackBST<Key extends Comparable<Key>, Value extends Comparable<V
         else return max(x.right); 
     } 
 	
-	private void keys(Node x, DoubleLinkedList<Key> list, Key lo, Key hi) {
+	private void keys(Node x, IQueue<Key> list, Key lo, Key hi) {
 		if (x == null) return; 
 	    int cmplo = lo.compareTo(x.key); 
 	    int cmphi = hi.compareTo(x.key); 
 	    if (cmplo < 0) keys(x.left, list, lo, hi); 
-	    if (cmplo <= 0 && cmphi >= 0) list.agregar(x.key); 
+	    if (cmplo <= 0 && cmphi >= 0) list.enqueue(x.key); 
 	    if (cmphi > 0) keys(x.right, list, lo, hi); 
 	}
 	
-	private void values(Node x, DoubleLinkedList<Value> list, Key lo, Key hi) {
+	private void values(Node x, IQueue<Value> list, Key lo, Key hi) {
 		if (x == null) return; 
 	    int cmplo = lo.compareTo(x.key); 
 	    int cmphi = hi.compareTo(x.key); 
 	    if (cmplo < 0) values(x.left, list, lo, hi); 
-	    if (cmplo <= 0 && cmphi >= 0) list.agregar(x.key); 
+	    if (cmplo <= 0 && cmphi >= 0) list.enqueue(x.val); 
 	    if (cmphi > 0) values(x.right, list, lo, hi); 
 	}
 }

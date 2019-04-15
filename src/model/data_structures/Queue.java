@@ -64,7 +64,6 @@ public class Queue<T> implements IQueue<T>  {
 	 * Clase que representa el iterador para la cola
 	 */
 	private class ListIterator implements Iterator<T> {
-		
 		private Node<T> current = first;
 		
 		public boolean hasNext() {

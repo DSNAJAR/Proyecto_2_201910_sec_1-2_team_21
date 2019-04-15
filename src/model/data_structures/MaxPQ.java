@@ -2,113 +2,120 @@ package model.data_structures;
 
 import java.util.Iterator;
 
-public class MaxPQ <Key extends Comparable<Key>, T> implements IQueue<T>{
-	private Key[] pq;
-	private int N;
+import com.sun.xml.internal.bind.v2.runtime.reflect.ListIterator;
 
-	@SuppressWarnings("unchecked")
-	public MaxPQ(int capacity) {
-		pq = (Key[]) new Comparable[capacity + 1];
-		N = 0;
+public class MaxPQ <Key extends Comparable<Key>, T> extends Queue<T>{
+	
+	/**
+	 * Primer nodo de la cola
+	 */
+	private NodoPriorityQueue<Key, T> primero;
+	
+	/**
+	 * Último nodo de la cola
+	 */
+	private NodoPriorityQueue<Key, T> ultimo;
+	
+	/**
+	 * Número de elementos
+	 */
+	private int N;
+	
+	public MaxPQ(int pN) {
+		this.N = pN;
+		this.primero = null;
+		this.ultimo = null;
+	}
+	
+	/**
+	* Retorna el primer nodo de la cola. Sin eliminarlo
+	* @return El primer nodo de la cola
+	*/
+	public NodoPriorityQueue<Key, T> darPrimero( )
+	{
+	return primero;
+	}
+
+	/**
+	* Retorna el último nodo de la cola. Sin eliminarlo
+	* @return El último nodo de la cola<}
+	*/
+	public NodoPriorityQueue<Key, T> darUltimo( )
+	{
+	return ultimo;
+	}
+
+	
+	@Override
+	public Iterator<T> iterator() {
+		// TODO Auto-generated method stub
+		return new ListIterator<T>(primero);
+	}
+	
+	 private class ListIterator<Item> implements Iterator<T> {
+	        private NodoPriorityQueue<Key, T> current;
+
+	        public ListIterator(NodoPriorityQueue<Key, T> first) {
+	            current = first;
+	        }
+
+	        public boolean hasNext()  { return current != null;                     }
+	        public void remove()      { throw new UnsupportedOperationException();  }
+
+	        public T next() {
+	            if (!hasNext()) return null;
+	            T item = current.getItem();
+	            current = current.getSiguiente(); 
+	            return item;
+	        }
+	    }
+
+	public void agregar(T item, Key prioridad) {
+		// TODO Auto-generated method stub
+		NodoPriorityQueue<Key, T> nuevo = new NodoPriorityQueue<Key, T>(prioridad, item);
+		if(isEmpty()) {
+			primero = nuevo;
+			ultimo = nuevo;
+		}
+		else if(primero.getPriority().compareTo(nuevo.getPriority()) < 0) {
+			nuevo.setSiguiente(primero);
+			primero = nuevo;
+		}
+		else {
+			NodoPriorityQueue<Key, T> aux = primero;
+			while(aux != null) {
+				if(aux.getSiguiente().getPriority().compareTo(nuevo.getPriority()) < 0) {
+					aux.setSiguiente(nuevo);
+					nuevo.setSiguiente(aux.getSiguiente());
+				}
+				aux = aux.getSiguiente();
+			}
+		}
+		N++;
+	}
+
+	public T getMax() {
+		// TODO Auto-generated method stub
+		NodoPriorityQueue<Key, T> max = primero;
+		if(primero.getSiguiente() != null) {
+			N--;
+			primero = max.getSiguiente();
+			max.setSiguiente(null);
+		}
+		return max.getItem();
 	}
 
 	/**
 	 * Indica si está vacío
 	 */
 	public boolean isEmpty() {
+		// TODO Auto-generated method stub
 		return N == 0;
 	}
 
 	/**
-	 * Elimina la raíz
-	 * @return max
+	 * Retorna el tamaño dela cola
 	 */
-	public Key delMax() {
-		Key max = pq[1];
-		exch(1, N--);
-		sink(1);
-		pq[N + 1] = null;
-		return max;
-	}
-
-	/**
-	 * Intercambia la llave del padre con la del hijo mas grande
-	 * @param k
-	 */
-	private void sink(int k) {
-		while (2 * k <= N) {
-			int j = 2 * k;
-			if (j < N && less(j, j + 1))
-				j++;
-			if (!less(k, j))
-				break;
-			exch(k, j);
-			k = j;
-		}
-	}
-
-	/**
-	 * Retorna true si el elemento en la posición i es menor que el elemento en
-	 * la posición j
-	 * @param i
-	 * @param j
-	 * @return
-	 */
-	private boolean less(int i, int j) {
-		return pq[i].compareTo(pq[j]) < 0;
-	}
-
-	/**
-	 * Intercambia las posiciones de los elementos de las posiciones que llegan
-	 * por parámetro
-	 * @param i
-	 * @param j
-	 */
-	private void exch(int i, int j) {
-		Key t = pq[i];
-		pq[i] = pq[j];
-		pq[j] = t;
-	}
-
-	/**
-	 * Intercambia la llave del hijo con la del padre hasta que esté en orden
-	 * @param k
-	 */
-	private void swim(int k) {
-		while (k > 1 && less(k / 2, k)) {
-			exch(k, k / 2);
-			k = k / 2;
-		}
-	}
-
-	/**
-	 * Inserta un elemento
-	 * @param x
-	 */
-	public void insert(Key x) {
-		pq[++N] = x;
-		swim(N);
-	}
-
-	@Override
-	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void enqueue(T item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public T dequeue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int size() {
 		// TODO Auto-generated method stub
 		return N;

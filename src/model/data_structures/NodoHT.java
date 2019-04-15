@@ -1,15 +1,15 @@
 package model.data_structures;
 
-public class NodoHT <T extends Comparable <T>, key, Value> {
+public class NodoHT <T extends Comparable <T>, Key, Value> {
 	
 	//------------------------------------------------------------
 	// ATRIBUTOS
 	//------------------------------------------------------------
-	private NodoHT<T, key, Value> next;
+	private NodoHT<T, Key, Value> next;
 
-	private Object key;
+	private Key key;
 	
-	private Object val;
+	private Value val;
 
 	
 	//-------------------------------------------------------------
@@ -19,7 +19,7 @@ public class NodoHT <T extends Comparable <T>, key, Value> {
 	 * Constructor 
 	 * @param item2 Objeto el cual vamos a usar
 	 */
-	public NodoHT (key llave, Value val, NodoHT<T, key, Value> nodo) {
+	public NodoHT (Key llave, Value val, NodoHT<T, Key, Value> nodo) {
 		this.key = llave;
 		this.val = val;
 		this.next = nodo;
@@ -28,7 +28,7 @@ public class NodoHT <T extends Comparable <T>, key, Value> {
 	 * Devuelvo el siguiente de la lista
 	 * @return Nodo siguiente
 	 */
-	public NodoHT<T, key, Value> getNext() {
+	public NodoHT<T, Key, Value> getNext() {
 		return next;
 	}
 	
@@ -52,7 +52,7 @@ public class NodoHT <T extends Comparable <T>, key, Value> {
 	 * Inserta en la posicion siguiente de la lista
 	 * @return Nodo siguiente
 	 */
-	public void setNext(NodoHT<T, key, Value> siguiente) {
+	public void setNext(NodoHT<T, Key, Value> siguiente) {
 		this.next = siguiente ;
 	}
 	
@@ -60,7 +60,7 @@ public class NodoHT <T extends Comparable <T>, key, Value> {
 	 * Inserta el item en el nodo
 	 * @param item. Item a insertar
 	 */
-	public void changeValue(Object item) {
+	public void changeValue(Value item) {
 		this.val = item;
 	}
 }

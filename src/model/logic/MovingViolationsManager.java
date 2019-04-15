@@ -6,17 +6,19 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import javax.swing.text.StyledEditorKit.ForegroundAction;
 
-import model.data_structures.DoubleLinkedList;
 import model.data_structures.IQueue;
 import model.data_structures.MaxPQ;
-import model.data_structures.Nodo;
 import model.data_structures.Queue;
+import model.data_structures.RedBlackBST;
 import model.data_structures.SeparateChainingHT;
 import model.vo.EstadisticaInfracciones;
 import model.vo.EstadisticasCargaInfracciones;
@@ -26,7 +28,6 @@ import model.vo.InfraccionesFranjaHoraria;
 import model.vo.InfraccionesFranjaHorariaViolationCode;
 import model.vo.InfraccionesLocalizacion;
 import model.vo.InfraccionesViolationCode;
-import model.vo.KeyCoordenadas;
 import model.vo.VOMovingViolations;
 
 public class MovingViolationsManager {
@@ -106,7 +107,7 @@ public class MovingViolationsManager {
 	public MovingViolationsManager()
 	{
 		//TODO inicializar los atributos
-		movingViolationsList = new Queue<VOMovingViolations>();
+		movingViolationsQueue = new Queue<VOMovingViolations>();
 	}
 	
 	/**
@@ -206,7 +207,7 @@ public class MovingViolationsManager {
 				
 				
 			    numeroInfracciones++;
-			    movingViolationsList.enqueue(new VOMovingViolations(objectId, location, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc));
+			    movingViolationsQueue.enqueue(new VOMovingViolations(objectId, location, addresId, streetSegId, xCoord, yCoord, ticketType, fineAMT, totalPaid, penal1, penal2, accidentIndicator, ticketIssueDate, violationCode, violationDesc));
 			    if(Double.compare(maxX, xCoord) < 0) maxX = xCoord;
 			    if(Double.compare(maxY, yCoord) < 0) maxY = yCoord;
 			    if(minX == 0.0) minX = xCoord; else if(Double.compare(minX, xCoord) > 0) minX = xCoord;
@@ -238,9 +239,36 @@ public class MovingViolationsManager {
 	public IQueue<InfraccionesFranjaHoraria> rankingNFranjas(int N)
 	{
 		// TODO completar
+		IQueue<VOMovingViolations> auxQueue = movingViolationsQueue;
+		IQueue<InfraccionesFranjaHoraria> resultado = new Queue<InfraccionesFranjaHoraria>();
+		InfraccionesFranjaHoraria[] infraccionesFranja = new InfraccionesFranjaHoraria[24];
+		VOMovingViolations movingViolation = null;
+		
+		for(int i = 0; i < infraccionesFranja.length; i++) {
+			LocalTime hInicial = ManejoFechaHora.convertirHora_LT(i + ":00:00");
+			LocalTime hFinal = ManejoFechaHora.convertirHora_LT(i + ":59:59");
+			
+			IQueue<VOMovingViolations> lista = new Queue<VOMovingViolations>();
+			
+			while((movingViolation = auxQueue.dequeue()) != null) {
+				String[] dateTime = movingViolation.getTicketIssueDate().split("T");
+				String[] time = dateTime[1].split(".");
+				LocalTime horaMV = ManejoFechaHora.convertirHora_LT(time[0]);
+				
+				if(horaMV.compareTo(hInicial) >= 0 && horaMV.compareTo(hFinal) <= 0) {
+					lista.enqueue(movingViolation);
+				}
+			}
+			auxQueue = movingViolationsQueue;
+			infraccionesFranja[i] = new InfraccionesFranjaHoraria(hInicial, hFinal, lista);
+		}
+
 		MaxPQ<Integer, InfraccionesFranjaHoraria> x = new MaxPQ<Integer, InfraccionesFranjaHoraria>(N);
-		x;
-		return (IQueue) x;
+		for(int i = 0; i < infraccionesFranja.length; i++) x.agregar(infraccionesFranja[i], infraccionesFranja[i].getTotalInfracciones());;		
+		
+		InfraccionesFranjaHoraria i = null;
+		while((i = x.getMax()) != null) resultado.enqueue(i); 
+		return resultado;
 	}
 	
 	/**
@@ -272,25 +300,41 @@ public class MovingViolationsManager {
 			@Override
 			public int compareTo(KeyCoordenadas o) {
 				// TODO Auto-generated method stub
-				return 0;
+				if(!this.xCoord.equals(o.xCoord)) {
+					if(Double.parseDouble(xCoord) < Double.parseDouble(o.xCoord)) return -1;
+					else if(Double.parseDouble(xCoord) > Double.parseDouble(o.xCoord)) return 1;
+				}
+				else {
+					if(Double.parseDouble(yCoord) < Double.parseDouble(o.yCoord)) return -1;
+					else if(Double.parseDouble(yCoord) == Double.parseDouble(o.yCoord)) return 0;
+					else if(Double.parseDouble(yCoord) > Double.parseDouble(o.yCoord)) return 1;
+				}
 			}
 		}
 		
 		IQueue<VOMovingViolations> queue = movingViolationsQueue;
 		IQueue<VOMovingViolations> aux = new Queue<VOMovingViolations>();
 		VOMovingViolations x = null;
-		SeparateChainingHT<KeyCoordenadas, EstadisticaInfracciones> ht = new SeparateChainingHT<>(m);
-		while((x = queue.dequeue()) != null) {
-			if()
+		SeparateChainingHT<KeyCoordenadas, VOMovingViolations> ht = new SeparateChainingHT<KeyCoordenadas, VOMovingViolations>();
+		
+		
+		Iterator<VOMovingViolations> it = movingViolationsQueue.iterator(); 
+		while(it.hasNext()) {
+			KeyCoordenadas key = new KeyCoordenadas(it.next().getXCoord(), it.next().getYCoord());
+			ht.put(key, value);
 		}
 		
-		InfraccionesLocalizacion z = new InfraccionesLocalizacion(xCoord, yCoord, locat, address, street, lista)
-		Nodo x = movingViolationsQueue.;
+		while((x = queue.dequeue()) != null) {
+			if(Double.compare(x.getXCoord(), xCoord) <= 0);
+		}
+		
+		//InfraccionesLocalizacion z = new InfraccionesLocalizacion(xCoord, yCoord, locat, address, street, lista)
+		//Nodo x = movingViolationsQueue.;
 		VOMovingViolations z = null;
 		while(x != null) {
-			z = (VOMovingViolations) x.getItem();
+			//z = (VOMovingViolations) x.getItem();
 		}
-		return ;		
+		return null;		
 	}
 	
 	/**
@@ -302,7 +346,55 @@ public class MovingViolationsManager {
 	public IQueue<InfraccionesFecha> consultarInfraccionesPorRangoFechas(LocalDate fechaInicial, LocalDate fechaFinal)
 	{
 		// TODO completar
-		return null;		
+		Iterator<VOMovingViolations> it = movingViolationsQueue.iterator();
+		LocalDate fecha = null;
+		String[] issueDate = null;
+		
+		RedBlackBST<ChronoLocalDate, VOMovingViolations> arbol = new RedBlackBST<ChronoLocalDate, VOMovingViolations>();
+		while(it.hasNext()) {
+			VOMovingViolations x = it.next();
+			issueDate = x.getTicketIssueDate().split("T");
+			fecha = ManejoFechaHora.convertirFecha_LD(issueDate[0]);
+			arbol.put(fecha, x);
+		}
+		
+		IQueue<InfraccionesFecha> resultado = new Queue<InfraccionesFecha>();
+		VOMovingViolations aux = null;
+		Iterator<ChronoLocalDate> itRB = arbol.keys();
+		IQueue<VOMovingViolations> lista = null;
+		InfraccionesFecha infrcFecha = null;
+		Iterator<InfraccionesFecha> infrcIt = resultado.iterator();
+		
+		while(itRB.hasNext()) {
+			ChronoLocalDate date = itRB.next();
+			aux = arbol.get(date);
+			if(date.isAfter(fechaFinal) && date.isBefore(fechaInicial) || date.isEqual(fechaInicial) || date.isEqual(fechaFinal)) {
+				if(resultado.isEmpty()) {
+					lista = new Queue<VOMovingViolations>();
+					lista.enqueue(aux);
+					infrcFecha = new InfraccionesFecha(lista, (LocalDate) date);
+					resultado.enqueue(infrcFecha);
+				}
+				else{
+					while(infrcIt.hasNext()) {
+						InfraccionesFecha temp = infrcIt.next();
+						VOMovingViolations mv = temp.getListaInfracciones().iterator().next();
+						while(temp != null && mv != null) {
+							issueDate = mv.getTicketIssueDate().split("T");
+							fecha = ManejoFechaHora.convertirFecha_LD(issueDate[0]);
+							if(fecha.equals(date)) {
+								temp.getListaInfracciones().enqueue(aux);
+							}
+							else {
+								infrcFecha = new InfraccionesFecha(lista, (LocalDate) date);
+								resultado.enqueue(infrcFecha);
+							}
+						}
+					}
+				}
+			}
+		}
+		return resultado;		
 	}
 	
 	/**
