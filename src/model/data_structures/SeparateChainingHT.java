@@ -70,4 +70,8 @@ public class SeparateChainingHT <K extends Comparable<K>, V> implements IHashTab
         }
         return queue.iterator();
 	}
+	
+	public int size() {
+        return n;
+    }
 }
