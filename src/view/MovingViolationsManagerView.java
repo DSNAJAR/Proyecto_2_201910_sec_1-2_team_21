@@ -67,11 +67,9 @@ public class MovingViolationsManagerView
 			System.out.println(vinfraFranjas.toString());
 			
 			/* Detalle de las infracciones (Se requiere SOLO en caso de validacion)*/
-			/*
 			for(VOMovingViolations vo: vinfraFranjas.getListaInfracciones()) {
 				System.out.println(vo.toString());
 			}
-			*/
 		}
 	}
 	
@@ -79,22 +77,19 @@ public class MovingViolationsManagerView
 		System.out.println(resultado.toString());
 		
 		/* Detalle de las infracciones (Se requiere SOLO en caso de validacion)*/
-		/*
 		for(VOMovingViolations v: resultado.getListaInfracciones()) {
 			System.out.println(v.toString());
 		}
-		*/
 	}
 	
 	public void printReq3A(IQueue<InfraccionesFecha> resultados) {
 		for(InfraccionesFecha infraFechas: resultados) {
 			System.out.println(infraFechas.toString());
 			/* Detalle de las infracciones (Se requiere SOLO en caso de validacion)*/
-			/*
+
 			for(VOMovingViolations vo: infraFechas.getListaInfracciones()) {
 				System.out.println(vo.toString());
 			}
-			*/
 		}
 	}
 	
@@ -136,11 +131,10 @@ public class MovingViolationsManagerView
 	public void printReq1C(InfraccionesLocalizacion resultado) {
 		System.out.println(resultado.toString());
 		/* Detalle de las infracciones (Se requiere SOLO en caso de validacion)*/
-		/*		
+				
 		for(VOMovingViolations v: resultado.getListaInfracciones()) {
 			System.out.println(v.toString());
 		}
-		*/
 	}
 	
 	public void printReq2C(InfraccionesFranjaHorariaViolationCode resultado) {
@@ -151,19 +145,17 @@ public class MovingViolationsManagerView
 			System.out.println(v.toString());
 
 			/* Detalle de las infracciones (Se requiere SOLO en caso de validacion)*/
-			/*
+			
 			for(VOMovingViolations vv: v.getListaInfracciones()) {
 				System.out.println(vv.toString());
 			}
-			*/
 		}
 
 		/* Detalle de las infracciones (Se requiere SOLO en caso de validacion)*/
-		/*
+		
 		for(VOMovingViolations v: resultado.getListaInfracciones()) {
 			System.out.println(v.toString());
 		}
-		*/
 	}
 	
 	
@@ -182,7 +174,7 @@ public class MovingViolationsManagerView
 	
 	public void printReq4C(Contenedora<InfraccionesViolationCode> resultados) {
 		//TODO La estructura Contenedora depende del metodo que retorna el resultado
-		//TODO Imprimir grafica ASCII con los codigos ordenados (de mayor a menor) por el total de sus infracciones 
+		//TODO Imprimir grafica ASCII con los codigos ordenados (de mayor a menor) por el total de sus infracciones
 	}
 	
 }

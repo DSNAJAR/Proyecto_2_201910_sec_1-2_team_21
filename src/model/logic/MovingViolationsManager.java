@@ -16,6 +16,7 @@ import java.util.Scanner;
 import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import model.data_structures.IQueue;
+import model.data_structures.LinearProbingHT;
 import model.data_structures.MaxPQ;
 import model.data_structures.Queue;
 import model.data_structures.RedBlackBST;
@@ -309,32 +310,52 @@ public class MovingViolationsManager {
 					else if(Double.parseDouble(yCoord) == Double.parseDouble(o.yCoord)) return 0;
 					else if(Double.parseDouble(yCoord) > Double.parseDouble(o.yCoord)) return 1;
 				}
+				return 0;
 			}
 		}
 		
 		IQueue<VOMovingViolations> queue = movingViolationsQueue;
-		IQueue<VOMovingViolations> aux = new Queue<VOMovingViolations>();
 		VOMovingViolations x = null;
-		SeparateChainingHT<KeyCoordenadas, VOMovingViolations> ht = new SeparateChainingHT<KeyCoordenadas, VOMovingViolations>();
+		LinearProbingHT<Double, VOMovingViolations> ht = new LinearProbingHT<Double, VOMovingViolations>(movingViolationsQueue.size());
 		
 		
 		Iterator<VOMovingViolations> it = movingViolationsQueue.iterator(); 
 		while(it.hasNext()) {
-			KeyCoordenadas key = new KeyCoordenadas(it.next().getXCoord(), it.next().getYCoord());
-			ht.put(key, value);
+			x = it.next();
+			KeyCoordenadas key = new KeyCoordenadas(it.next().getXCoord(), x.getYCoord());
+			if(!ht.contains(key.xCoord)) {
+				ht.put(key.xCoord, x);
+			}
+			else {
+				ht.put(key.yCoord, x);
+			}
 		}
 		
-		while((x = queue.dequeue()) != null) {
-			if(Double.compare(x.getXCoord(), xCoord) <= 0);
+		IQueue<VOMovingViolations> lista = new Queue<VOMovingViolations>();
+		Iterator<Double> itKeys = ht.iterator();
+		InfraccionesLocalizacion iL = null;
+		double xcoord = 0, ycoord = 0;
+		String locat = null;
+		int address = 0;
+		int street = 0;
+		double llave;
+		while(itKeys.hasNext()) {
+			llave = itKeys.next();
+			x = ht.get(llave);
+			
+			if(x.getXCoord() == xCoord && x.getYCoord() == yCoord) {
+				lista.enqueue(x);
+				xcoord = xCoord;
+				ycoord = yCoord;
+				locat = x.getLocation();
+				address = x.getAddressId();
+				street = x.getStreetSegId();
+			}
 		}
 		
-		//InfraccionesLocalizacion z = new InfraccionesLocalizacion(xCoord, yCoord, locat, address, street, lista)
-		//Nodo x = movingViolationsQueue.;
-		VOMovingViolations z = null;
-		while(x != null) {
-			//z = (VOMovingViolations) x.getItem();
-		}
-		return null;		
+		iL = new InfraccionesLocalizacion(xcoord, ycoord, locat, address, street, lista);
+		
+		return iL;
 	}
 	
 	/**
@@ -464,7 +485,23 @@ public class MovingViolationsManager {
 	public InfraccionesLocalizacion consultarPorAddressId(int addressID)
 	{
 		// TODO completar
-		return null;		
+		SeparateChainingHT<Integer, VOMovingViolations> ht = new SeparateChainingHT<Integer, VOMovingViolations>();
+		Iterator<VOMovingViolations> it = movingViolationsQueue.iterator();
+		VOMovingViolations mv = null;
+		
+		while(it.hasNext()) {
+			mv = it.next();
+			ht.put(mv.getAddressId(), mv);
+		}
+		
+		IQueue<VOMovingViolations> lista = new Queue<VOMovingViolations>();
+		InfraccionesLocalizacion infrcLocalizacion = null;
+		while((mv = (VOMovingViolations) ht.get(addressID)) != null) {
+			lista.enqueue(mv);
+			infrcLocalizacion = new InfraccionesLocalizacion(mv.getXCoord(), mv.getYCoord(), mv.getLocation(), mv.getAddressId(), mv.getStreetSegId(), lista);
+		}		
+		
+		return infrcLocalizacion;		
 	}
 	
 	/**
@@ -477,7 +514,26 @@ public class MovingViolationsManager {
 	public InfraccionesFranjaHorariaViolationCode consultarPorRangoHoras(LocalTime horaInicial, LocalTime horaFinal)
 	{
 		// TODO completar
-		return null;		
+		RedBlackBST<LocalTime, VOMovingViolations> bst = new RedBlackBST<LocalTime, VOMovingViolations>();
+		Iterator<VOMovingViolations> it = movingViolationsQueue.iterator();
+		VOMovingViolations x = null;
+		InfraccionesFranjaHorariaViolationCode iL = null;
+		
+		while(it.hasNext()) {
+			x = it.next();
+			String[] issueDate = x.getTicketIssueDate().split("T");
+			String[] time = issueDate[1].split(".");
+			LocalTime hora = ManejoFechaHora.convertirHora_LT(time[0]);
+			
+			bst.put(hora, x);
+		}
+		
+		Iterator<LocalTime> keys = bst.keys();
+		
+		while(keys.hasNext()) {
+			
+		}
+		return iL;	
 	}
 	
 	/**
@@ -488,8 +544,90 @@ public class MovingViolationsManager {
 	  */
 	public IQueue<InfraccionesLocalizacion> rankingNLocalizaciones(int N)
 	{
-		// TODO completar
-		return null;		
+		class KeyCoordenadas implements Comparable<KeyCoordenadas> {
+			String xCoord;
+			String yCoord;
+			
+			public KeyCoordenadas(Double pXCoord, Double pYCoord)
+			{
+				xCoord = pXCoord.toString();
+				yCoord = pYCoord.toString();
+				
+			}
+			
+			public String toString()
+			{
+				return xCoord + yCoord;
+			}
+
+			@Override
+			public int compareTo(KeyCoordenadas o) {
+				// TODO Auto-generated method stub
+				if(!this.xCoord.equals(o.xCoord)) {
+					if(Double.parseDouble(xCoord) < Double.parseDouble(o.xCoord)) return -1;
+					else if(Double.parseDouble(xCoord) > Double.parseDouble(o.xCoord)) return 1;
+				}
+				else {
+					if(Double.parseDouble(yCoord) < Double.parseDouble(o.yCoord)) return -1;
+					else if(Double.parseDouble(yCoord) == Double.parseDouble(o.yCoord)) return 0;
+					else if(Double.parseDouble(yCoord) > Double.parseDouble(o.yCoord)) return 1;
+				}
+				return 0;
+			}
+		}
+		
+		IQueue<InfraccionesLocalizacion> resultado = new Queue<InfraccionesLocalizacion>();
+		IQueue<InfraccionesLocalizacion> conjuntoIL = new Queue<InfraccionesLocalizacion>();
+		SeparateChainingHT<KeyCoordenadas, VOMovingViolations> hashT = new SeparateChainingHT<KeyCoordenadas, VOMovingViolations>();
+		Iterator<VOMovingViolations> it = movingViolationsQueue.iterator();
+		VOMovingViolations x = null;
+		KeyCoordenadas llave = null;
+		InfraccionesLocalizacion iL = null;
+		InfraccionesLocalizacion aux = null;
+		
+		while(it.hasNext()) {
+			x = it.next();
+			llave = new KeyCoordenadas(x.getXCoord(), x.getYCoord());
+			hashT.put(llave, x);
+		}
+		
+		int i = 0;
+		Iterator<KeyCoordenadas> itKeys = hashT.iterator();
+		IQueue<VOMovingViolations> lista = new Queue<VOMovingViolations>();
+		while(itKeys.hasNext() && i != N) {
+			llave = itKeys.next();
+			Iterator<InfraccionesLocalizacion> itIL = resultado.iterator();
+			
+			if(resultado.isEmpty()) {
+				while((x = (VOMovingViolations) hashT.get(llave)) != null) {
+					lista.enqueue(x);
+					iL = new InfraccionesLocalizacion(x.getXCoord(), x.getYCoord(), x.getLocation(), x.getAddressId(), x.getStreetSegId(), lista);
+					resultado.enqueue(iL);
+					i++;
+				}
+			}
+			else {
+				it = movingViolationsQueue.iterator();
+				boolean ya = false;
+				while(itIL.hasNext()) {
+					
+					x = it.next();
+					for(aux = itIL.next(); ya!=false; aux =itIL.next()) {
+						if(x.getXCoord() == aux.getXcoord() && x.getYCoord() == aux.getYcoord()) {
+							aux.getListaInfracciones().enqueue(x);
+							ya = true;
+						}
+					}
+					if(ya == false) {
+						lista.enqueue(x);
+						iL = new InfraccionesLocalizacion(x.getXCoord(), x.getYCoord(), x.getLocation(), x.getAddressId(), x.getStreetSegId(), lista);
+					}
+				}
+				resultado.enqueue(iL);
+				i++;
+			}
+		}
+		return resultado;
 	}
 	
 	/**
@@ -501,7 +639,7 @@ public class MovingViolationsManager {
 	{
 		// TODO completar
 		// TODO Definir la Estructura Contenedora
-		return null;		
+		return null;
 	}
 
 

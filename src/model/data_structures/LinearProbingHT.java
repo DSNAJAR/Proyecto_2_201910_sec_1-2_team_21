@@ -27,11 +27,11 @@ public class LinearProbingHT <K extends Comparable<K>, V> implements IHashTable{
         for (int i = 0; i < M; i++) {
         	if (keys[i] != null) list.enqueue(keys[i]);
         }
-             return (Iterator<K>) list;
+             return list.iterator();
 	}
 
 	@Override
-	public void put(Comparable key, Object value) {
+	public void put(Object key, Object value) {
 		// TODO Auto-generated method stub
 		if (N/M > 0.75)
 			resize(2*M); // double M (see text)
@@ -48,7 +48,7 @@ public class LinearProbingHT <K extends Comparable<K>, V> implements IHashTable{
 	}
 
 	@Override
-	public Object get(Comparable key) {
+	public V get(Object key) {
 		// TODO Auto-generated method stub
 		for (int i = hash(key); keys[i] != null; i = (i + 1) % M)
 			if (keys[i].equals(key))
@@ -57,9 +57,9 @@ public class LinearProbingHT <K extends Comparable<K>, V> implements IHashTable{
 	}
 
 	@Override
-	public Object delete(Comparable key) {
+	public void delete(Object key) {
 		// TODO Auto-generated method stub
-		if(!contains(key)) return null;
+		if(!contains(key)) return ;
 		
 		int i = hash(key);
 		while (!key.equals(keys[i]))
@@ -78,7 +78,6 @@ public class LinearProbingHT <K extends Comparable<K>, V> implements IHashTable{
 		}
 		N-- ;
 		if (N > 0 && N == M/8) resize(M/2);
-		return key;
 	}
 	
 	private void resize(int capacity) {
@@ -94,12 +93,12 @@ public class LinearProbingHT <K extends Comparable<K>, V> implements IHashTable{
 		M    = temp.M;
 	}
 	
-	private int hash(Comparable key)
+	private int hash(Object key)
 	{
 		return (key.hashCode() & 0x7fffffff) % M;
 	}
 	
-	public boolean contains(Comparable key) {
+	public boolean contains(Object key) {
         if (key == null) throw new IllegalArgumentException("argument to contains() is null");
         return get(key) != null;
     }

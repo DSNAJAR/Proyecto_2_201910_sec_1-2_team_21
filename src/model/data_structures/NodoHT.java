@@ -1,15 +1,15 @@
 package model.data_structures;
 
-public class NodoHT <T extends Comparable <T>, Key, Value> {
+public class NodoHT <T, K, V> {
 	
 	//------------------------------------------------------------
 	// ATRIBUTOS
 	//------------------------------------------------------------
-	private NodoHT<T, Key, Value> next;
+	private NodoHT<T, K, V> next;
 
-	private Key key;
+	private K key;
 	
-	private Value val;
+	private V val;
 
 	
 	//-------------------------------------------------------------
@@ -19,16 +19,16 @@ public class NodoHT <T extends Comparable <T>, Key, Value> {
 	 * Constructor 
 	 * @param item2 Objeto el cual vamos a usar
 	 */
-	public NodoHT (Key llave, Value val, NodoHT<T, Key, Value> nodo) {
+	public NodoHT (K llave, V val, NodoHT<T, K, V> nodoSiguiente) {
 		this.key = llave;
 		this.val = val;
-		this.next = nodo;
+		this.next = nodoSiguiente;
 	}
 	/**
 	 * Devuelvo el siguiente de la lista
 	 * @return Nodo siguiente
 	 */
-	public NodoHT<T, Key, Value> getNext() {
+	public NodoHT<T, K, V> getNext() {
 		return next;
 	}
 	
@@ -36,7 +36,7 @@ public class NodoHT <T extends Comparable <T>, Key, Value> {
 	 * Devuelve la llave
 	 * @return Object. Llave
 	 */
-	public Object getKey() {
+	public K getKey() {
 		return  key;
 	}
 	
@@ -44,7 +44,7 @@ public class NodoHT <T extends Comparable <T>, Key, Value> {
 	 * Devuelve el valor
 	 * @return Object. value
 	 */
-	public Object getValue() {
+	public V getValue() {
 		return  val;
 	}
 	
@@ -52,7 +52,7 @@ public class NodoHT <T extends Comparable <T>, Key, Value> {
 	 * Inserta en la posicion siguiente de la lista
 	 * @return Nodo siguiente
 	 */
-	public void setNext(NodoHT<T, Key, Value> siguiente) {
+	public void setNext(NodoHT<T, K, V> siguiente) {
 		this.next = siguiente ;
 	}
 	
@@ -60,7 +60,7 @@ public class NodoHT <T extends Comparable <T>, Key, Value> {
 	 * Inserta el item en el nodo
 	 * @param item. Item a insertar
 	 */
-	public void changeValue(Value item) {
+	public void changeValue(V item) {
 		this.val = item;
 	}
 }
