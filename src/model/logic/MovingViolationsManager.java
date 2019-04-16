@@ -405,8 +405,28 @@ public class MovingViolationsManager {
 	  */
 	public IQueue<InfraccionesViolationCode> rankingNViolationCodes(int N)
 	{
-		// TODO completar
-		return null;		
+		IQueue<VOMovingViolations> auxQueue = movingViolationsQueue;
+		IQueue<InfraccionesViolationCode> resultado = new Queue<InfraccionesViolationCode>();
+		VOMovingViolations movingViolation = null;
+		IQueue<VOMovingViolations> lista = new Queue<VOMovingViolations>();
+		
+		
+		while((movingViolation = auxQueue.dequeue()) != null && resultado.size() < N) {
+
+			movingViolation = auxQueue.dequeue();
+			InfraccionesViolationCode esta = new InfraccionesViolationCode(movingViolation.getViolationCode(), lista);
+			if(esta.getTotalInfracciones() > 0){
+				resultado.enqueue(esta);				
+			}
+			
+		}
+
+		MaxPQ<Integer, IQueue<InfraccionesViolationCode>> x = new MaxPQ<Integer, IQueue<InfraccionesViolationCode>>(N);
+		for(int i = 0; i < resultado.size(); i++) x.agregar(resultado,i);		
+		 InfraccionesViolationCode z = null;
+		 if((z = x.getMax()) != null)
+	
+		return resultado;		
 	}
 
 	

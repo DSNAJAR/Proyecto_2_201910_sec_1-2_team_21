@@ -190,7 +190,10 @@ public class VOMovingViolations  implements Comparable<VOMovingViolations>{
 	public double getYCoord() {
 		return yCoord;
 	}
-
+	
+	public String getViolationCode(){
+		return violationCode;
+	}
 	@Override
 	public int compareTo(VOMovingViolations o) {
 		// TODO Auto-generated method stub
