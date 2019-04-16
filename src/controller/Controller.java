@@ -20,9 +20,14 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.sun.xml.internal.ws.util.StringUtils;
 
 import jdk.nashorn.internal.runtime.arrays.IteratorAction;
+import model.data_structures.IQueue;
 import model.logic.ManejoFechaHora;
 import model.logic.MovingViolationsManager;
 import model.vo.EstadisticasCargaInfracciones;
+import model.vo.InfraccionesFecha;
+import model.vo.InfraccionesFranjaHoraria;
+import model.vo.InfraccionesFranjaHorariaViolationCode;
+import model.vo.InfraccionesLocalizacion;
 import model.vo.VOMovingViolations;
 import sun.reflect.generics.tree.VoidDescriptor;
 import view.MovingViolationsManagerView;
@@ -101,10 +106,10 @@ public class Controller {
 				int numeroFranjas = sc.nextInt();
 
 				//TODO Completar para la invocación del metodo 1A
-				//model.rankingNFranjas(int N)
+				IQueue<InfraccionesFranjaHoraria> resultados = model.rankingNFranjas(numeroFranjas);
 				
 				//TODO Mostrar resultado de tipo Cola con N InfraccionesFranjaHoraria
-				//view.printReq1A( ...);
+				view.printReq1A(resultados);
 				break;
 
 			case 2:
@@ -114,10 +119,10 @@ public class Controller {
 				double ycoord = sc.nextDouble();
 
 				//TODO Completar para la invocación del metodo 2A
-				//model.consultarPorLocalizacionHash(double xCoord, double yCoord)
+				InfraccionesLocalizacion resultado = model.consultarPorLocalizacionHash(xcoord, ycoord);
 
 				//TODO Mostrar resultado de tipo InfraccionesLocalizacion 
-				//view.printReq2A( ... )
+				view.printReq2A(resultado);
 				break;
 
 			case 3:
@@ -130,10 +135,10 @@ public class Controller {
 				LocalDate fechaFinal = ManejoFechaHora.convertirFecha_LD( fechaFinalStr );
 
 				//TODO Completar para la invocacion del metodo 3A
-				//model.consultarInfraccionesPorRangoFechas(LocalDate fechaInicial, LocalDate fechaFinal)
+				IQueue<InfraccionesFecha> ans = model.consultarInfraccionesPorRangoFechas(fechaInicial, fechaFinal);
 
 				//TODO Mostrar resultado de tipo Cola de InfraccionesFecha
-				//view.printReq3A( ... )
+				view.printReq3A(ans);
 				break;
 
 
@@ -181,7 +186,7 @@ public class Controller {
 
 				startTime = System.currentTimeMillis();
 				//TODO Completar para la invocación del metodo 1C
-				//model.consultarPorAddressId(int addressID)
+				InfraccionesLocalizacion res = model.consultarPorAddressId(addressID);
 
 				endTime = System.currentTimeMillis();
 
@@ -189,7 +194,7 @@ public class Controller {
 				view.printMessage("Tiempo requerimiento 1C: " + duration + " milisegundos");
 
 				//TODO Mostrar resultado de tipo InfraccionesLocalizacion 	
-				//view.printReq1C( ... )
+				view.printReq1C(res);
 				break;
 
 			case 8:
@@ -203,14 +208,14 @@ public class Controller {
 
 				startTime = System.currentTimeMillis();
 				//TODO Completar para la invocacion del metodo 2C
-				//model.consultarPorRangoHoras(LocalTime horaInicial, LocalTime horaFinal)
+				InfraccionesFranjaHorariaViolationCode resp = model.consultarPorRangoHoras(horaInicial, horaFinal);
 
 				endTime = System.currentTimeMillis();
 
 				duration = endTime - startTime;
 				view.printMessage("Tiempo requerimiento 2C: " + duration + " milisegundos");
 				//TODO Mostrar resultado de tipo InfraccionesFranjaHorarioViolationCode
-				//view.printReq2C( ... )
+				view.printReq2C(resp);
 				break;
 
 			case 9:
